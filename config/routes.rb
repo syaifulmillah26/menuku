@@ -3,7 +3,11 @@
 Rails.application.routes.draw do
   scope "(:locale)", locale: /en|id/ do
     namespace :api do
-      resources :companies
+      resources :company, only: %i[index] do
+        collection do
+          put :update_company
+        end
+      end
       resources :outlets
 
       resources :provinces, only: %i[index]
@@ -19,12 +23,14 @@ Rails.application.routes.draw do
         end
       end
       post '/auth/signin', to: 'user_token#create'
+      post '/company/join', to: 'companies#create'
       resources :profile, only: %i[index] do
         collection do
           put :update_profile
           put :update_password
         end
       end
+      match '*path', to: 'error_controller#handle_root_not_found', via: %i[get post]
     end
   end
   devise_for :users
