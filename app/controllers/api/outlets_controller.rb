@@ -5,7 +5,7 @@ module Api
   class OutletsController < Api::ResourceController
     skip_before_action :authenticate_user
     def index
-      @objects = current_user.company.outlets
+      @objects = current_user&.company&.outlets
       @all = total
       if params[:province_id].present?
         @objects = Admin::City.where(province_id: params[:province_id])

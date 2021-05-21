@@ -14,15 +14,7 @@ module Knock
     private
 
     def authenticate
-      data = { message: 'Your Company banned' }
-      return render json: data, status: 422 if entity.company.inactive?
-
-      data = { message: 'Please ask your admin to activate your account' }
-      return render json: data, status: 422 if entity.inactive?
-
-      wrong_email_or_pass = entity.authenticate(auth_params[:password])
-      data = { message: 'Wrong email or password' }
-      return render json: data, status: 422 unless wrong_email_or_pass
+      entity?
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end
@@ -54,6 +46,33 @@ module Knock
 
     def auth_params
       params.require(:auth).permit :email, :password
+    end
+
+    def entity?
+      data = { message: 'User is not registered yet' }
+      return render json: data, status: 422 unless entity
+
+      inactive_entity?
+    end
+
+    def inactive_entity?
+      data = { message: 'Please ask your admin to activate your account' }
+      return render json: data, status: 422 if entity.inactive?
+
+      inactive_company?
+    end
+
+    def inactive_company?
+      data = { message: 'Your Company banned' }
+      return render json: data, status: 422 if entity.company.inactive?
+
+      wrong_email_or_pass?
+    end
+
+    def wrong_email_or_pass?
+      wrong_email_or_pass = entity.authenticate(auth_params[:password])
+      data = { message: 'Wrong email or password' }
+      return render json: data, status: 422 unless wrong_email_or_pass
     end
   end
 end

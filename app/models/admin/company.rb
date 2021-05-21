@@ -5,11 +5,13 @@ class Admin
   # class company from admin db
   class Company < Admin
     include ::StateMachines::Company
-    validates :company_name, presence: true
 
-    has_many  :users,
-              class_name: 'User',
-              dependent: :destroy
+    belongs_to  :business_type,
+                class_name: 'Admin::BusinessType'
+
+    has_one :users,
+            class_name: 'User',
+            dependent: :destroy
 
     has_one :company_detail,
             class_name: 'Admin::CompanyDetail',
@@ -19,16 +21,11 @@ class Admin
               class_name: 'Admin::Outlet',
               dependent: :destroy
 
-    after_create :generate_registration_id
+    # after_create :generate_registration_id
+    after_create :set_company_detail
 
     accepts_nested_attributes_for :company_detail,
                                   update_only: true,
-                                  allow_destroy: true
-
-    accepts_nested_attributes_for :outlets,
-                                  allow_destroy: true
-
-    accepts_nested_attributes_for :users,
                                   allow_destroy: true
 
     def generate_registration_id
@@ -48,6 +45,11 @@ class Admin
 
     def register_id
       Admin::Company.where(registration_id: @registration_id)
+    end
+
+    def set_company_detail
+      address = Admin::Address.create(address1: 'default')
+      Admin::CompanyDetail.create(company_id: company.id, address_id: address.id)
     end
   end
 end

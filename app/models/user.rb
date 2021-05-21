@@ -22,13 +22,17 @@ class User < ApplicationRecord
 
   has_one :address, through: :user_detail
 
-  belongs_to  :company,
-              class_name: 'Admin::Company'
+  has_one :company,
+          class_name: 'Admin::Company'
 
   after_create :assign_default_role
-  after_create :assign_default_user_detail
+  # after_create :assign_default_user_detail
   after_create :send_email_confirmation
   after_create :generate_uuid
+  after_create :set_company
+
+
+  accepts_nested_attributes_for :user_detail
 
   private
 
@@ -46,10 +50,10 @@ class User < ApplicationRecord
     user.add_role(:admin) if user.roles.blank?
   end
 
-  def assign_default_user_detail
-    address = Admin::Address.create(address1: 'l15')
-    UserDetail.create(user_id: user.id, address_id: address.id)
-  end
+  # def assign_default_user_detail
+  #   address = Admin::Address.create(address1: 'l15')
+  #   UserDetail.create(user_id: user.id, address_id: address.id)
+  # end
 
   def user
     self
@@ -57,5 +61,12 @@ class User < ApplicationRecord
 
   def update_confirmed_at
     update_column(:confirmed_at, DateTime.now)
+  end
+
+  def set_company
+    return true if user.company_id.present?
+
+    company = Admin::Company.create(user_id: user.id)
+    update_column(:company_id, company.id)
   end
 end

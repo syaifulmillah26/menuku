@@ -3,11 +3,10 @@
 Rails.application.routes.draw do
   scope "(:locale)", locale: /en|id/ do
     namespace :api do
-      resources :company, only: %i[index] do
-        collection do
-          put :update_company
-        end
+      resources :my_company, only: %i[index] do
       end
+
+      resources :companies, only: %i[update]
       resources :outlets
 
       resources :provinces, only: %i[index]
@@ -23,7 +22,6 @@ Rails.application.routes.draw do
         end
       end
       post '/auth/signin', to: 'user_token#create'
-      post '/company/join', to: 'companies#create'
       resources :profile, only: %i[index] do
         collection do
           put :update_profile

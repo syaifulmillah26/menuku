@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_10_194849) do
+ActiveRecord::Schema.define(version: 2021_05_21_055957) do
 
   create_table "action_text_rich_texts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -50,6 +50,28 @@ ActiveRecord::Schema.define(version: 2021_04_10_194849) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "friendly_id_slugs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "slug", null: false
+    t.integer "sluggable_id", null: false
+    t.string "sluggable_type", limit: 50
+    t.string "scope"
+    t.datetime "created_at"
+    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true, length: { slug: 70, scope: 70 }
+    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", length: { slug: 140 }
+    t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
+  end
+
+  create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "outlet_id"
+    t.string "name"
+    t.string "description"
+    t.integer "promotionable"
+    t.string "slug"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["slug"], name: "index_products_on_slug", unique: true
+  end
+
   create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
     t.string "resource_type"
@@ -61,11 +83,47 @@ ActiveRecord::Schema.define(version: 2021_04_10_194849) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
 
+  create_table "taxonomies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "position", default: 0
+    t.string "slug"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["position"], name: "index_taxonomies_on_position"
+    t.index ["slug"], name: "index_taxonomies_on_slug", unique: true
+  end
+
+  create_table "taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "parent_id"
+    t.integer "position", default: 0
+    t.string "name", null: false
+    t.string "permalink"
+    t.integer "taxonomy_id"
+    t.integer "lft"
+    t.integer "rgt"
+    t.string "icon_file_name"
+    t.string "icon_content_type"
+    t.integer "icon_file_size"
+    t.datetime "icon_updated_at"
+    t.text "description"
+    t.string "meta_title"
+    t.string "meta_description"
+    t.string "meta_keywords"
+    t.integer "depth"
+    t.string "slug"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["parent_id"], name: "index_taxons_on_parent_id"
+    t.index ["permalink"], name: "index_taxons_on_permalink"
+    t.index ["position"], name: "index_taxons_on_position"
+    t.index ["slug"], name: "index_taxons_on_slug", unique: true
+    t.index ["taxonomy_id"], name: "index_taxons_on_taxonomy_id"
+  end
+
   create_table "user_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "user_id"
     t.integer "address_id"
-    t.string "firstname"
-    t.string "lastname"
+    t.string "fullname"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_user_details_on_user_id"
@@ -73,7 +131,8 @@ ActiveRecord::Schema.define(version: 2021_04_10_194849) do
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "uuid"
-    t.string "company_id"
+    t.integer "company_id"
+    t.integer "outlet_id"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"

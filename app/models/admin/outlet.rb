@@ -12,10 +12,17 @@ class Admin
                 class_name: 'Admin::Address',
                 dependent: :destroy
 
+    has_many  :users,
+              class_name: 'User',
+              dependent: :destroy
+
     # after_create :generate_uuid
 
     accepts_nested_attributes_for :address,
                                   update_only: true,
+                                  allow_destroy: true
+
+    accepts_nested_attributes_for :users,
                                   allow_destroy: true
   end
 end

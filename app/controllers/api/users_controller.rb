@@ -6,6 +6,15 @@ module Api
     exception = %i[create email_confirmation forgot_password set_new_password]
     before_action :authenticate_user, except: exception
 
+    def index
+      @objects = \
+        User.where(company_id: current_user&.company&.id)
+      @all = total
+      render json: all_datas, status: :ok
+    rescue StandardError => e
+      render json: { message: e.message }, status: 500
+    end
+
     def email_confirmation
       token = params[:token]
       return render json: t('officer.account.token_not_found') if token.blank?
