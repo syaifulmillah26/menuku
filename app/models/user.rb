@@ -25,7 +25,6 @@ class User < ApplicationRecord
   belongs_to  :company,
               class_name: 'Admin::Company'
 
-
   after_create :assign_default_role
   after_create :assign_default_user_detail
   after_create :send_email_confirmation
@@ -44,11 +43,11 @@ class User < ApplicationRecord
   end
 
   def assign_default_role
-    user.add_role(:user) if user.roles.blank?
+    user.add_role(:admin) if user.roles.blank?
   end
 
   def assign_default_user_detail
-    address = Admin::Address.create(address1: nil)
+    address = Admin::Address.create(address1: 'l15')
     UserDetail.create(user_id: user.id, address_id: address.id)
   end
 
