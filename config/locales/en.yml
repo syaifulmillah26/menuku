@@ -76,5 +76,11 @@ en:
         activate: Email Activated
     add: Add
     attribute_should_not_be_empty: Attribute should not be empty!
+    invalid_params: Invalid params
     success: Success
     failed: Failed
+    products:
+      empty: No Products
+      taxon_not_found: Taxon does not exist
+    taxonomies:
+      not_found: Taxonomy not found

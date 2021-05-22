@@ -3,6 +3,7 @@
 # User
 class User < ApplicationRecord
   include StateMachines::User
+  include UuidHelper
 
   acts_as_paranoid
 
@@ -15,32 +16,36 @@ class User < ApplicationRecord
   friendly_id :uuid, use: :slugged
   rolify
 
-  has_one :user_detail,
-          class_name: 'UserDetail',
-          dependent: :destroy,
-          inverse_of: :user
+  belongs_to  :company,
+              class_name: 'Admin::Company',
+              foreign_key: :company_id,
+              primary_key: :uuid,
+              optional: true
 
-  has_one :address, through: :user_detail
+  has_one     :user_detail,
+              class_name: 'UserDetail',
+              foreign_key: :user_id,
+              primary_key: :uuid,
+              dependent: :destroy,
+              inverse_of: :user
 
-  has_one :company,
-          class_name: 'Admin::Company'
+  has_one     :address, through: :user_detail
 
-  after_create :assign_default_role
-  # after_create :assign_default_user_detail
   after_create :send_email_confirmation
-  after_create :generate_uuid
+  after_create :assign_default_role
   after_create :set_company
-
 
   accepts_nested_attributes_for :user_detail
 
   private
 
-  def generate_uuid
-    update_column(:uuid, SecureRandom.hex(30))
+  def check_uuid
+    User.where(uuid: @uuid)
   end
 
   def send_email_confirmation
+    return user.confirm! unless user.company_id.blank?
+
     update_column(:confirmation_token, SecureRandom.hex(50))
     update_column(:confirmation_sent_at, DateTime.now)
     DeviseMailer.with(object: user).confirmation_instructions.deliver_later
@@ -49,11 +54,6 @@ class User < ApplicationRecord
   def assign_default_role
     user.add_role(:admin) if user.roles.blank?
   end
-
-  # def assign_default_user_detail
-  #   address = Admin::Address.create(address1: 'l15')
-  #   UserDetail.create(user_id: user.id, address_id: address.id)
-  # end
 
   def user
     self
@@ -66,7 +66,7 @@ class User < ApplicationRecord
   def set_company
     return true if user.company_id.present?
 
-    company = Admin::Company.create(user_id: user.id)
+    company = Admin::Company.create!(user_id: user.id)
     update_column(:company_id, company.id)
   end
 end

@@ -7,7 +7,21 @@
 # this file is here to facilitate running it.
 #
 module ApplicationHelper
+  private
+
   def desc(object)
-    object.order('id DESC')
+    object&.order('id DESC')
+  end
+
+  def set_slug
+    object.slug = dasherize_name
+  end
+
+  def dasherize_name
+    object.name.gsub(' ', '-')
+  end
+
+  def object
+    self
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_05_21_055957) do
+ActiveRecord::Schema.define(version: 2021_05_22_183750) do
 
   create_table "action_text_rich_texts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 2021_05_21_055957) do
   end
 
   create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "outlet_id"
+    t.string "outlet_id"
     t.string "name"
     t.string "description"
     t.integer "promotionable"
@@ -70,6 +70,17 @@ ActiveRecord::Schema.define(version: 2021_05_21_055957) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["slug"], name: "index_products_on_slug", unique: true
+  end
+
+  create_table "products_taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "product_id"
+    t.integer "taxon_id"
+    t.integer "position"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["position"], name: "index_products_taxons_on_position"
+    t.index ["product_id"], name: "index_products_taxons_on_product_id"
+    t.index ["taxon_id"], name: "index_products_taxons_on_taxon_id"
   end
 
   create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
@@ -86,21 +97,17 @@ ActiveRecord::Schema.define(version: 2021_05_21_055957) do
   create_table "taxonomies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
     t.integer "position", default: 0
-    t.string "slug"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "outlet_id"
     t.index ["position"], name: "index_taxonomies_on_position"
-    t.index ["slug"], name: "index_taxonomies_on_slug", unique: true
   end
 
   create_table "taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.integer "parent_id"
     t.integer "position", default: 0
     t.string "name", null: false
     t.string "permalink"
     t.integer "taxonomy_id"
-    t.integer "lft"
-    t.integer "rgt"
     t.string "icon_file_name"
     t.string "icon_content_type"
     t.integer "icon_file_size"
@@ -109,30 +116,27 @@ ActiveRecord::Schema.define(version: 2021_05_21_055957) do
     t.string "meta_title"
     t.string "meta_description"
     t.string "meta_keywords"
-    t.integer "depth"
-    t.string "slug"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["parent_id"], name: "index_taxons_on_parent_id"
+    t.string "ancestry"
+    t.index ["ancestry"], name: "index_taxons_on_ancestry"
     t.index ["permalink"], name: "index_taxons_on_permalink"
     t.index ["position"], name: "index_taxons_on_position"
-    t.index ["slug"], name: "index_taxons_on_slug", unique: true
     t.index ["taxonomy_id"], name: "index_taxons_on_taxonomy_id"
   end
 
   create_table "user_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "user_id"
+    t.string "user_id"
     t.integer "address_id"
     t.string "fullname"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_user_details_on_user_id"
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "uuid"
-    t.integer "company_id"
-    t.integer "outlet_id"
+    t.string "uuid", limit: 35, null: false
+    t.string "company_id"
+    t.string "outlet_id"
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
@@ -164,7 +168,7 @@ ActiveRecord::Schema.define(version: 2021_05_21_055957) do
   end
 
   create_table "users_roles", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "user_id"
+    t.string "user_id"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"

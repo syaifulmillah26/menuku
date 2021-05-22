@@ -7,12 +7,17 @@ Rails.application.routes.draw do
       end
 
       resources :companies, only: %i[update]
-      resources :outlets
+      resources :outlets do
+        resources :products
+        resources :taxonomies do
+          collection do
+            post :update_positions
+          end
+          resources :taxons
+        end
+      end
 
-      resources :provinces, only: %i[index]
-      resources :cities, only: %i[index]
-      resources :subdistricts, only: %i[index]
-
+      resources :roles
       resources :users do
         collection do
           get :profile
@@ -22,13 +27,16 @@ Rails.application.routes.draw do
         end
       end
       post '/auth/signin', to: 'user_token#create'
+      post '/auth/signup', to: 'users#create'
+      get '/t/*path', to: 'taxonomies#products'
+
+      match '/*path', to: 'error#handle_root_not_found', via: :all
       resources :profile, only: %i[index] do
         collection do
           put :update_profile
           put :update_password
         end
       end
-      match '*path', to: 'error_controller#handle_root_not_found', via: %i[get post]
     end
   end
   devise_for :users

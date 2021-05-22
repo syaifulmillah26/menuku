@@ -5,9 +5,9 @@ class DeviseCreateUsers < ActiveRecord::Migration[6.1]
     create_table :users do |t|
 
       ## custom
-      t.string :uuid
-      t.integer :company_id
-      t.integer :outlet_id
+      t.string :uuid, primary: true, limit: 35, null: false
+      t.string :company_id
+      t.string :outlet_id
 
       ## Database authenticatable
       t.string :email,              null: false, default: ""
