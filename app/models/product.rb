@@ -14,6 +14,8 @@ class Product < ApplicationRecord
               primary_key: :uuid,
               optional: true
 
+  has_one_attached :image
+
   validates   :outlet_id, presence: true
   validates   :name, presence: true
   validates_uniqueness_of :name, scope: :outlet_id

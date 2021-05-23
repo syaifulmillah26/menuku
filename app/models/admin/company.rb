@@ -13,7 +13,8 @@ class Admin
 
     has_one     :company_detail,
                 class_name: 'Admin::CompanyDetail',
-                dependent: :destroy
+                foreign_key: :company_id,
+                primary_key: :uuid
 
     has_many    :outlets,
                 class_name: 'Admin::Outlet',
@@ -34,6 +35,9 @@ class Admin
                 -> { where.not(outlet_id: nil) },
                 class_name: 'User',
                 foreign_key: :company_id
+
+    validates :user_id, presence: true
+    validates_uniqueness_of :user_id
 
     accepts_nested_attributes_for :company_detail,
                                   update_only: true,

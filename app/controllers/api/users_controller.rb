@@ -6,6 +6,7 @@ module Api
     exception = %i[create email_confirmation forgot_password set_new_password]
     before_action :authenticate_user, except: exception
 
+    # get all users based on company
     def index
       @objects = \
         User.where(company_id: current_user&.company&.id)
@@ -15,13 +16,11 @@ module Api
       render json: { message: e.message }, status: 500
     end
 
+    # activating user
     def email_confirmation
-      token = params[:token]
-      return render json: t('officer.account.token_not_found') if token.blank?
-
       status, result = Officer::Account::EmailConfirmation.new(
         params
-      ).send
+      ).activate
 
       return render json: result, status: 422 unless status
 
@@ -30,10 +29,11 @@ module Api
       render json: { message: e.message }, status: 500
     end
 
+    # handle forgot password
     def forgot_password
       status, result = Officer::Account::Password.new(
         params, {}
-      ).send_reset_password
+      ).reset_password
 
       return render json: result, status: 422 unless status
 
@@ -42,13 +42,11 @@ module Api
       render json: { message: e.message }, status: 500
     end
 
+    # handle set new password
     def set_new_password
-      password = params[:password]
-      return render json: t('officer.account.password_empty') if password.blank?
-
       status, result = Officer::Account::Password.new(
         params, {}
-      ).save_new_password
+      ).new_password
 
       return render json: result, status: 422 unless status
 

@@ -8,7 +8,13 @@ module Knock
     before_action :authenticate
 
     def create
-      render json: auth_token, status: :created
+      data = {
+        message: 'success',
+        user_id: entity&.id,
+        jwt: auth_token&.token
+      }
+
+      render json: data, status: :created
     end
 
     private
@@ -59,14 +65,8 @@ module Knock
       data = { message: 'Please ask your admin to activate your account' }
       return render json: data, status: 422 if entity.inactive?
 
-      inactive_company?
-    end
-
-    def inactive_company?
-      data = { message: 'Your Company banned' }
-      return render json: data, status: 422 if entity.company.inactive?
-
       wrong_email_or_pass?
+      # inactive_company?
     end
 
     def wrong_email_or_pass?
@@ -74,5 +74,12 @@ module Knock
       data = { message: 'Wrong email or password' }
       return render json: data, status: 422 unless wrong_email_or_pass
     end
+
+    # def inactive_company?
+    #   data = { message: 'Your Company banned' }
+    #   return render json: data, status: 422 if entity.company.inactive?
+
+    #   wrong_email_or_pass?
+    # end
   end
 end

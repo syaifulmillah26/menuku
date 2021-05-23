@@ -1,7 +1,6 @@
-class TaxonomySerializer < ActiveModel::Serializer
-  attributes :id, :outlet_id, :name, :root, :taxons
+# frozen_string_literal: true
 
-  def root
-    object.root
-  end
+# TaxonomySerializer
+class TaxonomySerializer < ActiveModel::Serializer
+  attributes :id, :outlet_id, :name
 end

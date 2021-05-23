@@ -11,7 +11,9 @@ module Officer
       end
 
       def outlet_id
-        ::Admin::Outlet.find_by(slug: params[:outlet_slug])&.id
+        ::Admin::Outlet.friendly.find(params[:outlet_id])&.id
+      rescue ActiveRecord::RecordNotFound
+        false
       end
 
       def taxon

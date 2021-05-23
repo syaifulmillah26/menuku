@@ -67,8 +67,6 @@ en:
       new_link_password: We have sent you a link to set new password!
       success: Success
       token_expired: Token Expired
-      user_not_found: No User Found
-      token_not_found: No Token Found
       password_saved: Password saved!
       password_empty: Password empty
       password_does_not_match: Old password does not match with current password
@@ -81,6 +79,4 @@ en:
     failed: Failed
     products:
       empty: No Products
-      taxon_not_found: Taxon does not exist
-    taxonomies:
-      not_found: Taxonomy not found
+    not_found: '%{r} is not found'

@@ -3,7 +3,9 @@
 module Api
   # TaxonomiesController
   class TaxonomiesController < Api::ResourceController
-    before_action :authenticate_user, except: %i[index show]
+    before_action :authenticate_user, except: %i[index show products]
+
+    # get all taxonomies
     def index
       @status, @result = Officer::Outlets::Taxonomies.new(
         params
@@ -16,10 +18,11 @@ module Api
       render json: { message: e.message }, status: 500
     end
 
+    # get spesific taxonomy include taxons in trees
     def show
-      @status, @result = Officer::Outlets::Taxons.new(
+      @status, @result = Officer::Outlets::Taxonomies.new(
         params
-      ).grab_all
+      ).grab_one
 
       return render json: @result, status: 422 unless @status
 
@@ -28,10 +31,11 @@ module Api
       render json: { message: e.message }, status: 500
     end
 
+    # get all products based on taxonomies
     def products
-      @status, @result = Officer::Outlets::ProductTaxons.new(
+      @status, @result = Officer::Outlets::Products.new(
         params
-      ).all_products
+      ).grab_products_taxons
 
       return render json: @result, status: 422 unless @status
 

@@ -31,9 +31,8 @@ class User < ApplicationRecord
 
   has_one     :address, through: :user_detail
 
-  after_create :send_email_confirmation
   after_create :assign_default_role
-  after_create :set_company
+  after_create :send_email_confirmation
 
   accepts_nested_attributes_for :user_detail
 
@@ -61,12 +60,5 @@ class User < ApplicationRecord
 
   def update_confirmed_at
     update_column(:confirmed_at, DateTime.now)
-  end
-
-  def set_company
-    return true if user.company_id.present?
-
-    company = Admin::Company.create!(user_id: user.id)
-    update_column(:company_id, company.id)
   end
 end

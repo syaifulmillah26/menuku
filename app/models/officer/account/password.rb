@@ -12,50 +12,84 @@ module Officer
         @user = current_user
       end
 
-      def send_reset_password
-        @user = ::User.find_by(email: params[:email])
-        return false, t('officer.account.user_not_found') if @user.blank?
+      # reset password
+      def reset_password
+        return false, { message: t('officer.invalid_params') } \
+          unless reset_password_params
+
+        @user = ::User.find_by(
+          email: params[:email]
+        )
+        return false, { message: I18n.t('officer.not_found', r: 'User') } if \
+          @user.blank?
 
         reset_password_token
+      rescue StandardError => e
+        [false, e.message]
       end
 
-      def reset_password_token
-        begin
-          @user.reset_password_token = SecureRandom.hex(30)
-          @user.reset_password_sent_at = DateTime.now
-          @user.save!
-          DeviseMailer.with(object: @user).reset_password_instructions.deliver_later
-          return true, { message: t('officer.account.new_link_password') }
-        rescue StandardError => e
-          return false, e.message
-        end
-      end
+      # set new password
+      def new_password
+        return false, { message: t('officer.invalid_params') } \
+          unless new_password_params
 
-      def save_new_password
-        @user = User.find_by(email: params[:email], reset_password_token: params[:token])
-        return false, t('officer.account.token_expired') unless @user
+        @user = User.find_by(
+          email: params[:email], reset_password_token: params[:token]
+        )
+        return false, { message: t('officer.account.token_expired') } \
+          unless @user
 
         save
+      rescue StandardError => e
+        [false, e.message]
       end
 
+      # change password
       def change_password
-        message = t('officer.account.password_does_not_match')
-        return false, { message: message } unless check_hashed_password
+        return false, { message: t('officer.account.password_does_not_match') } \
+          unless check_hashed_password
 
         save
-      end
-
-      def save
-        begin
-          @user.encrypted_password = hashed_password
-          @user.save!
-          return true, { message: t('officer.account.password_saved') }
-        rescue StandardError => e
-          return false, e.message
-        end
+      rescue StandardError => e
+        [false, e.message]
       end
 
       private
+
+      def save
+        @user.encrypted_password = hashed_password
+        @user.save!
+
+        DeviseMailer.with(
+          object: @user
+        ).password_change.deliver_later
+
+        [true, { message: t('officer.account.password_saved') }]
+      end
+
+      def reset_password_token
+        @user.reset_password_token = SecureRandom.hex(30)
+        @user.reset_password_sent_at = DateTime.now
+        @user.save!
+
+        DeviseMailer.with(
+          object: @user
+        ).reset_password_instructions.deliver_later
+
+        [true, { message: t('officer.account.new_link_password') }]
+      end
+
+      def reset_password_params
+        return false if params[:email].blank?
+
+        true
+      end
+
+      def new_password_params
+        return false if params[:email].blank? || params[:token].blank?
+
+        true
+      end
 
       def hashed_password
         BCrypt::Password.create(params[:password])

@@ -8,7 +8,7 @@ class Admin
                 class_name: 'Admin::Company',
                 foreign_key: :company_id,
                 primary_key: :uuid,
-                touch: true
+                optional: true
 
     belongs_to  :address,
                 class_name: 'Admin::Address',
@@ -18,6 +18,5 @@ class Admin
     accepts_nested_attributes_for :address,
                                   update_only: true,
                                   allow_destroy: true
-
   end
 end

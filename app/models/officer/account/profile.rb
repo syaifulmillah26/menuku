@@ -12,21 +12,29 @@ module Officer
         @current_user = current_user
       end
 
+      # update user detail
       def update_user_detail
-        begin
-          user_detail.update(user_detail_param)
-          data = { message: t('officer.account.success'), data: serializer(current_user) }
-          return true, data
-        rescue StandardError => e
-          return false, e.message
-        end
+        return false, { message: t('officer.account.success') } \
+          unless update_user_detail_params
+
+        user_detail.update(user_detail_param)
+
+        [true, { message: t('officer.account.success'), data: serializer(current_user) }]
+      rescue StandardError => e
+        [false, e.message]
       end
+
+      private
 
       def user_detail
         current_user.user_detail
       end
 
-      private
+      def update_user_detail_params
+        return false if params[:user_detail].blank?
+
+        true
+      end
 
       def user_detail_param
         params[:user_detail].permit(permitted_params)

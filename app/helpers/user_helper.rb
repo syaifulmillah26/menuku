@@ -8,5 +8,4 @@
 require 'bcrypt'
 # helper
 module UserHelper
-  # assigning default role
 end
