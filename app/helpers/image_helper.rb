@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-# Tablename "company_details"
-
-# ===== Columns ===== #
-
 # helper
 module ImageHelper
   Rails.application.routes.url_helpers

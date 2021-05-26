@@ -4,7 +4,6 @@ module Officer
   module Account
     # email confirmation
     class Password < ::Api::ApplicationController
-      include UserHelper
       attr_reader :params, :current_user
 
       def initialize(params, current_user)
@@ -14,49 +13,45 @@ module Officer
 
       # reset password
       def reset_password
-        return false, { message: t('officer.invalid_params') } \
-          unless reset_password_params
+        return false, { message: t('officer.invalid_params') } if \
+          params[:email].blank?
 
-        @user = ::User.find_by(
-          email: params[:email]
-        )
-        return false, { message: I18n.t('officer.not_found', r: 'User') } if \
-          @user.blank?
+        @user = find_user_by_email
+        return false, { message: I18n.t('officer.not_found', r: 'User') } \
+          unless @user
 
-        reset_password_token
+        send_reset_password_token
       rescue StandardError => e
         [false, e.message]
       end
 
       # set new password
       def new_password
-        return false, { message: t('officer.invalid_params') } \
-          unless new_password_params
+        return false, { message: t('officer.invalid_params') } if \
+          params[:email].blank? || params[:token].blank?
 
-        @user = User.find_by(
-          email: params[:email], reset_password_token: params[:token]
-        )
+        @user = find_user_by_reset_password_token
         return false, { message: t('officer.account.token_expired') } \
           unless @user
 
-        save
+        save_password
       rescue StandardError => e
         [false, e.message]
       end
 
       # change password
       def change_password
-        return false, { message: t('officer.account.password_does_not_match') } \
-          unless check_hashed_password
+        return false, { message: t('officer.account.wrong_current_password') } \
+          unless check_current_password
 
-        save
+        save_password
       rescue StandardError => e
         [false, e.message]
       end
 
       private
 
-      def save
+      def save_password
         @user.encrypted_password = hashed_password
         @user.save!
 
@@ -67,9 +62,9 @@ module Officer
         [true, { message: t('officer.account.password_saved') }]
       end
 
-      def reset_password_token
-        @user.reset_password_token = SecureRandom.hex(30)
-        @user.reset_password_sent_at = DateTime.now
+      def send_reset_password_token
+        @user.reset_password_token = secure_random_token
+        @user.reset_password_sent_at = current_time
         @user.save!
 
         DeviseMailer.with(
@@ -79,24 +74,23 @@ module Officer
         [true, { message: t('officer.account.new_link_password') }]
       end
 
-      def reset_password_params
-        return false if params[:email].blank?
-
-        true
+      def find_user_by_email
+        ::User.find_by(email: params[:email])
       end
 
-      def new_password_params
-        return false if params[:email].blank? || params[:token].blank?
-
-        true
+      def find_user_by_reset_password_token
+        User.find_by(
+          email: params[:email], reset_password_token: params[:token]
+        )
       end
 
       def hashed_password
         BCrypt::Password.create(params[:password])
       end
 
-      def check_hashed_password
-        BCrypt::Password.new(@user.encrypted_password) == params[:old_password]
+      def check_current_password
+        BCrypt::Password.new(@user.encrypted_password) == \
+          params[:current_password]
       end
     end
   end

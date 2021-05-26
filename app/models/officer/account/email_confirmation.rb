@@ -12,8 +12,8 @@ module Officer
 
       # activate
       def activate
-        return false, { message: I18n.t('officer.not_found', r: 'Token') } \
-          unless activate_params
+        return false, { message: I18n.t('officer.not_found', r: 'Token') } if \
+          params[:token].blank?
 
         return false, { message: I18n.t('officer.not_found', r: 'User') } \
           unless user
@@ -30,12 +30,6 @@ module Officer
 
       def user
         ::User.find_by(confirmation_token: params[:token])
-      end
-
-      def activate_params
-        return false if params[:token].blank?
-
-        true
       end
     end
   end

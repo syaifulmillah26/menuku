@@ -2,6 +2,7 @@
 
 # taxons
 class Taxon < ApplicationRecord
+  include ApplicationHelper
   # attr_accessor :parent_id
   has_ancestry
   # acts_as_nested_set dependent: :destroy
@@ -34,16 +35,16 @@ class Taxon < ApplicationRecord
   def set_permalink
     permalink_tail = \
       parent_link.present? ? "#{parent_link}/#{dasherize}" : dasherize
-    self.permalink = permalink_tail.downcase
+    object.permalink = permalink_tail.downcase
   end
 
   def set_position
-    position = self&.parent&.children&.maximum(:position).to_i + 1
-    return update_column(:position, position) unless self&.parent.blank?
+    position = object&.parent&.children&.maximum(:position).to_i + 1
+    return update_column(:position, position) unless object&.parent.blank?
   end
 
   def parent_link
-    self&.parent&.permalink
+    object&.parent&.permalink
   end
 
   def dasherize

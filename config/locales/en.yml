@@ -69,7 +69,7 @@ en:
       token_expired: Token Expired
       password_saved: Password saved!
       password_empty: Password empty
-      password_does_not_match: Old password does not match with current password
+      wrong_current_password: Wrong current password
       email:
         activate: Email Activated
     add: Add

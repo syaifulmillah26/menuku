@@ -16,6 +16,10 @@ module Api
       ActiveModelSerializers::SerializableResource.new(object).as_json
     end
 
+    def desc(object)
+      object&.order('id DESC')
+    end
+
     def invalid_resource!(resource)
       Rails.logger.error "resouce_errors => #{resource.errors.full_messages}"
       render json: { error: resource.errors.full_messages }, status: 422

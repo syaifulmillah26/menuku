@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 # helper
-module UserDetailHelper
+module TaxonomyHelper
 end

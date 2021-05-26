@@ -59,10 +59,6 @@ class Admin
 
     private
 
-    def outlet
-      self
-    end
-
     def check_uuid
       Admin::Outlet.where(uuid: @uuid)
     end

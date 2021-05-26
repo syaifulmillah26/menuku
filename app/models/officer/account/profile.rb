@@ -14,8 +14,8 @@ module Officer
 
       # update user detail
       def update_user_detail
-        return false, { message: t('officer.account.success') } \
-          unless update_user_detail_params
+        return false, { message: t('officer.invalid_params') } if \
+          params[:user_detail].blank?
 
         user_detail.update(user_detail_param)
 
@@ -28,12 +28,6 @@ module Officer
 
       def user_detail
         current_user.user_detail
-      end
-
-      def update_user_detail_params
-        return false if params[:user_detail].blank?
-
-        true
       end
 
       def user_detail_param

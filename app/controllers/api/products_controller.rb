@@ -33,7 +33,7 @@ module Api
 
     # set image for product
     def set_product_image
-      @status, @result = Officer::Images::Product.new(
+      @status, @result = Officer::Images.new(
         params
       ).save_product_image
 

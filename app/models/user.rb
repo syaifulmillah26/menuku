@@ -3,6 +3,7 @@
 # User
 class User < ApplicationRecord
   include StateMachines::User
+  include ApplicationHelper
   include UuidHelper
 
   acts_as_paranoid
@@ -43,22 +44,18 @@ class User < ApplicationRecord
   end
 
   def send_email_confirmation
-    return user.confirm! unless user.company_id.blank?
+    return object.confirm! unless object.company_id.blank?
 
-    update_column(:confirmation_token, SecureRandom.hex(50))
-    update_column(:confirmation_sent_at, DateTime.now)
-    DeviseMailer.with(object: user).confirmation_instructions.deliver_later
+    update_column(:confirmation_token, secure_random_token)
+    update_column(:confirmation_sent_at, current_time)
+    DeviseMailer.with(object: object).confirmation_instructions.deliver_later
   end
 
   def assign_default_role
-    user.add_role(:admin) if user.roles.blank?
-  end
-
-  def user
-    self
+    object.add_role(:admin) if object.roles.blank?
   end
 
   def update_confirmed_at
-    update_column(:confirmed_at, DateTime.now)
+    update_column(:confirmed_at, current_time)
   end
 end

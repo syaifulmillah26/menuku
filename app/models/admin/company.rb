@@ -5,6 +5,7 @@ class Admin
   # class company from admin db
   class Company < Admin
     include ::StateMachines::Company
+    include ApplicationHelper
     include UuidHelper
 
     belongs_to  :business_type,
@@ -44,10 +45,6 @@ class Admin
                                   allow_destroy: true
 
     private
-
-    def company
-      self
-    end
 
     def check_uuid
       Admin::Company.where(uuid: @uuid)

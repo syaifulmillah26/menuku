@@ -2,6 +2,7 @@
 
 # taxonomies
 class Taxonomy < ApplicationRecord
+  include ApplicationHelper
   # acts_as_list
 
   has_many    :taxons,
@@ -29,7 +30,7 @@ class Taxonomy < ApplicationRecord
         updated_at: Time.current
       )
     else
-      self.root = Taxon.create!(taxonomy_id: id, name: name)
+      object.root = Taxon.create!(taxonomy_id: id, name: name)
     end
   end
 

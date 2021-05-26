@@ -6,8 +6,8 @@ module Officer
     class Products < Main
       # Grab all products based on outlet
       def grab_all
-        return false, { message: t('officer.invalid_params') } \
-          unless grab_all_params
+        return false, { message: t('officer.invalid_params') } if \
+          params[:outlet_id].blank?
 
         return false, { message: I18n.t('officer.not_found', r: 'Outlet') } \
           unless outlet_id
@@ -19,11 +19,11 @@ module Officer
 
       # Grab one product based on outlet
       def grab_one
-        return false, { message: t('officer.invalid_params') } \
-          unless grab_one_params
+        return false, { message: t('officer.invalid_params') } if \
+          params[:outlet_id].blank? || params[:id].blank?
 
         return false, { message: I18n.t('officer.not_found', r: 'Outlet') } \
-            unless outlet_id
+          unless outlet_id
 
         product
       rescue StandardError => e
@@ -32,13 +32,16 @@ module Officer
 
       # grab product taxons
       def grab_products_taxons
-        return false, { message: t('officer.invalid_params') } \
-          unless grab_products_taxons_params
+        return false, { message: t('officer.invalid_params') } if \
+          params[:outlet_id].blank? || params[:path].blank?
+
+        return false, { message: I18n.t('officer.not_found', r: 'Outlet') } \
+          unless outlet_id
 
         return false, { message: I18n.t('officer.not_found', r: 'Taxon') } \
-         unless taxon
+          unless taxon
 
-        products
+        products_taxons
       rescue StandardError => e
         [false, e.message]
       end
@@ -46,7 +49,10 @@ module Officer
       private
 
       def products
-        products = ::Product.where(outlet_id: outlet_id).all
+        products = ::Product.where(
+          outlet_id: outlet_id
+        ).all
+
         return false, { message: t('officer.products.empty') } \
           unless products
 
@@ -66,9 +72,6 @@ module Officer
       end
 
       def products_taxons
-        return false, { message: I18n.t('officer.not_found', r: 'Outlet') } \
-          unless outlet_id
-
         products_taxons = ::Product.where(id: product_ids).all
         return false, { message: t('officer.products.empty') } \
           unless products_taxons
@@ -82,26 +85,6 @@ module Officer
 
       def classification
         ::Classification.where(taxon_id: taxon_id)
-      end
-
-      # params
-
-      def grab_all_params
-        return false if params[:outlet_id].blank?
-
-        true
-      end
-
-      def grab_one_params
-        return false if params[:outlet_id].blank? || params[:id].blank?
-
-        true
-      end
-
-      def grab_products_taxons_params
-        return false if params[:outlet_id].blank? || params[:path].blank?
-
-        true
       end
     end
   end

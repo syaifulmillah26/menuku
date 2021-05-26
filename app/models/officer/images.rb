@@ -12,7 +12,7 @@ module Officer
     # Image Product
     def save_product_image
       return false, { message: t('officer.invalid_params') } \
-        unless save_product_image_params
+        unless product_image_params
 
       status, result = Officer::Outlets::Products.new(
         params
@@ -45,7 +45,7 @@ module Officer
 
     # params
 
-    def save_product_image_params
+    def product_image_params
       return false if \
         params[:image].blank? || params[:id].blank? || \
         params[:outlet_id].blank?
