@@ -13,7 +13,11 @@ module Api
     end
 
     def serializer(object)
-      ActiveModel::SerializableResource.new(object).as_json
+      ActiveModelSerializers::SerializableResource.new(object).as_json
+    end
+
+    def desc(object)
+      object&.order('id DESC')
     end
 
     def invalid_resource!(resource)

@@ -10,18 +10,26 @@ module Officer
         @params = params
       end
 
-      def send
-        user = ::User.find_by(confirmation_token: params[:token])
-        return false, t('officer.account.user_not_found') unless user
+      # activate
+      def activate
+        return false, { message: I18n.t('officer.not_found', r: 'Token') } if \
+          params[:token].blank?
 
-        begin
-          user.confirm!
-          DeviseMailer.with(object: user).activated_email.deliver_later
-          data = { message: t('officer.account.email.activate') }
-          return true, data
-        rescue StandardError => e
-          return false, e.message
-        end
+        return false, { message: I18n.t('officer.not_found', r: 'User') } \
+          unless user
+
+        user.confirm!
+        DeviseMailer.with(object: user).activated_email.deliver_later
+
+        [true, { message: t('officer.account.email.activate') }]
+      rescue StandardError => e
+        [false, e.message]
+      end
+
+      private
+
+      def user
+        ::User.find_by(confirmation_token: params[:token])
       end
     end
   end

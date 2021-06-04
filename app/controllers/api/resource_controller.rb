@@ -73,9 +73,8 @@ module Api
     private
 
     def set_object
-      if model_class == User
-        return @object = model_class.friendly.find(params[:id])
-      end
+      return @object = model_class.friendly.find(params[:id]) if \
+        model_class == Admin::Outlet || model_class == Product
 
       @object = model_class.find(params[:id])
     rescue StandardError => e
@@ -113,7 +112,13 @@ module Api
     end
 
     def total
-      @objects.count
+      @objects&.count
+    end
+
+    def results
+      @objects = @result
+      @all = total
+      all_datas
     end
 
     def all_datas

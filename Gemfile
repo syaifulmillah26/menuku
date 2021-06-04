@@ -26,6 +26,8 @@ gem 'awesome_nested_set' # act_as_nested_set
 gem 'active_model_serializers'
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'rails-i18n'
+gem 'ancestry'
+
 
 # Use Puma as the app server
 gem 'puma', '~> 5.0'

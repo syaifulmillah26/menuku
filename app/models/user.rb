@@ -3,6 +3,8 @@
 # User
 class User < ApplicationRecord
   include StateMachines::User
+  include ApplicationHelper
+  include UuidHelper
 
   acts_as_paranoid
 
@@ -15,47 +17,60 @@ class User < ApplicationRecord
   friendly_id :uuid, use: :slugged
   rolify
 
-  has_one :user_detail,
-          class_name: 'UserDetail',
-          dependent: :destroy,
-          inverse_of: :user
-
-  has_one :address, through: :user_detail
-
   belongs_to  :company,
-              class_name: 'Admin::Company'
+              class_name: 'Admin::Company',
+              foreign_key: :company_id,
+              primary_key: :uuid,
+              optional: true
+
+  has_one     :user_detail,
+              class_name: 'UserDetail',
+              foreign_key: :user_id,
+              primary_key: :uuid,
+              dependent: :destroy,
+              inverse_of: :user
+
+  has_one     :address, through: :user_detail
 
   after_create :assign_default_role
-  after_create :assign_default_user_detail
   after_create :send_email_confirmation
-  after_create :generate_uuid
+
+  accepts_nested_attributes_for :user_detail
+
+  def self.create_user_provider(data, provider)
+    where(email: data['email']).first_or_initialize.tap do |user|
+      user.provider = provider
+      user.email = data['email']
+      user.password = Devise.friendly_token[0, 20]
+      user.password_confirmation = user.password
+      user.save!
+    end
+  end
 
   private
 
-  def generate_uuid
-    update_column(:uuid, SecureRandom.hex(30))
+  def check_uuid
+    User.where(uuid: @uuid)
   end
 
   def send_email_confirmation
-    update_column(:confirmation_token, SecureRandom.hex(50))
-    update_column(:confirmation_sent_at, DateTime.now)
-    DeviseMailer.with(object: user).confirmation_instructions.deliver_later
+    return object.confirm! if company_or_provider_exist
+
+    update_column(:confirmation_token, secure_random_token)
+    update_column(:confirmation_sent_at, current_time)
+    DeviseMailer.with(object: object).confirmation_instructions.deliver_later
   end
 
   def assign_default_role
-    user.add_role(:admin) if user.roles.blank?
-  end
-
-  def assign_default_user_detail
-    address = Admin::Address.create(address1: 'l15')
-    UserDetail.create(user_id: user.id, address_id: address.id)
-  end
-
-  def user
-    self
+    object.add_role(:admin) if object.roles.blank?
   end
 
   def update_confirmed_at
-    update_column(:confirmed_at, DateTime.now)
+    update_column(:confirmed_at, current_time)
+  end
+
+  def company_or_provider_exist
+    object.company_id.present?
+    object.provider.present?
   end
 end
