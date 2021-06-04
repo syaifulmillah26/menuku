@@ -3,7 +3,8 @@
 # Uuid helper is for generating uuid for every object that has uuid attribute
 module UuidHelper
   def self.included(base)
-    return if base.name.blank?
+    return if \
+      base.name == 'ApplicationController::HelperMethods' || base.name.blank?
 
     base.primary_key = 'uuid'
     base.before_create :assign_uuid

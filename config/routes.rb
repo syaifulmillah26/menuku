@@ -49,6 +49,7 @@ Rails.application.routes.draw do
       # frontend routes
       post '/auth/signin', to: 'user_token#create'
       post '/auth/signup', to: 'users#create'
+      post '/auth/request', to: 'omniauth#request_provider'
 
       get '/:outlet_id', to: 'outlets#products'
       get '/:outlet_id/products/:id', to: 'outlets#product'

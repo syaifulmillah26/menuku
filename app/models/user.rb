@@ -37,6 +37,16 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :user_detail
 
+  def self.create_user_provider(data, provider)
+    where(email: data['email']).first_or_initialize.tap do |user|
+      user.provider = provider
+      user.email = data['email']
+      user.password = Devise.friendly_token[0, 20]
+      user.password_confirmation = user.password
+      user.save!
+    end
+  end
+
   private
 
   def check_uuid
@@ -44,7 +54,7 @@ class User < ApplicationRecord
   end
 
   def send_email_confirmation
-    return object.confirm! unless object.company_id.blank?
+    return object.confirm! if company_or_provider_exist
 
     update_column(:confirmation_token, secure_random_token)
     update_column(:confirmation_sent_at, current_time)
@@ -57,5 +67,10 @@ class User < ApplicationRecord
 
   def update_confirmed_at
     update_column(:confirmed_at, current_time)
+  end
+
+  def company_or_provider_exist
+    object.company_id.present?
+    object.provider.present?
   end
 end

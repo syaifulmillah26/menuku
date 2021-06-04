@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_dependency 'knock/application_controller'
+# require_dependency 'knock/application_controller'
 # module
 module Knock
   # knock gem
@@ -8,13 +8,7 @@ module Knock
     before_action :authenticate
 
     def create
-      data = {
-        message: 'success',
-        user_id: entity&.id,
-        jwt: auth_token&.token
-      }
-
-      render json: data, status: :created
+      render json: token, status: :created
     end
 
     private
@@ -23,6 +17,14 @@ module Knock
       entity?
     rescue StandardError => e
       render json: { message: e.message }, status: 500
+    end
+
+    def token
+      {
+        message: 'success',
+        user_id: entity&.id,
+        auth_token: auth_token&.token
+      }
     end
 
     def auth_token
