@@ -64,8 +64,9 @@ module Officer
       end
 
       def param_exists
-        params[:token].present?
-        params[:provider].present?
+        return true if params[:token].present? || params[:provider].present?
+
+        false
       end
     end
   end

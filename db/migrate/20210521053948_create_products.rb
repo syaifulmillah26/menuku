@@ -5,6 +5,7 @@ class CreateProducts < ActiveRecord::Migration[6.1]
       t.string :name
       t.string :description
       t.integer :promotionable
+      t.integer :stock_availability
       t.string :slug
 
       t.timestamps

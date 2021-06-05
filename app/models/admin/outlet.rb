@@ -25,7 +25,7 @@ class Admin
     has_one     :admin_outlet,
                 lambda {
                   joins(:roles)
-                    .where(roles: { name: :admin })
+                    .where(roles: { name: :admin_outlet })
                     .where.not(outlet_id: nil)
                 },
                 class_name: 'User',
@@ -39,6 +39,18 @@ class Admin
                 },
                 class_name: 'User',
                 dependent: :destroy
+
+    has_many    :tables,
+                class_name: 'Table',
+                foreign_key: :outlet_id,
+                primary_key: :uuid,
+                inverse_of: :outlet
+
+    has_many    :orders,
+                class_name: 'Order',
+                foreign_key: :outlet_id,
+                primary_key: :uuid,
+                inverse_of: :outlet
 
     has_many    :products,
                 class_name: 'Product',
@@ -55,6 +67,9 @@ class Admin
                                   allow_destroy: true
 
     accepts_nested_attributes_for :admin_outlet,
+                                  allow_destroy: true
+
+    accepts_nested_attributes_for :tables,
                                   allow_destroy: true
 
     private

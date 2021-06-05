@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_04_063420) do
+ActiveRecord::Schema.define(version: 2021_06_05_085744) do
 
   create_table "action_text_rich_texts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -61,11 +61,44 @@ ActiveRecord::Schema.define(version: 2021_06_04_063420) do
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
+  create_table "order_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "outlet_id", null: false
+    t.integer "product_id"
+    t.integer "order_id"
+    t.integer "quantity", default: 1
+    t.integer "is_cancel", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "orders", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "outlet_id", null: false
+    t.integer "table_id", null: false
+    t.string "order_number"
+    t.integer "item_count", default: 0
+    t.decimal "item_total", precision: 10, scale: 2
+    t.decimal "total", precision: 10, scale: 2
+    t.decimal "additional_tax", precision: 10, scale: 2
+    t.decimal "additional_services", precision: 10, scale: 2
+    t.decimal "promo_total", precision: 10, scale: 2
+    t.string "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "prices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "product_id", null: false
+    t.decimal "amount", precision: 10, scale: 2
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "outlet_id"
     t.string "name"
     t.string "description"
     t.integer "promotionable"
+    t.integer "stock_availability"
     t.string "slug"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -92,6 +125,16 @@ ActiveRecord::Schema.define(version: 2021_06_04_063420) do
     t.index ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
     t.index ["name"], name: "index_roles_on_name"
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
+  end
+
+  create_table "tables", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "outlet_id", null: false
+    t.integer "table_number"
+    t.integer "seat", default: 0
+    t.integer "guest_access"
+    t.string "status"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "taxonomies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

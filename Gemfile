@@ -28,7 +28,6 @@ gem 'dotenv-rails', groups: [:development, :test]
 gem 'rails-i18n'
 gem 'ancestry'
 
-
 # Use Puma as the app server
 gem 'puma', '~> 5.0'
 # Use SCSS for stylesheets

@@ -70,7 +70,8 @@ class User < ApplicationRecord
   end
 
   def company_or_provider_exist
-    object.company_id.present?
-    object.provider.present?
+    return true if object.company_id.present? || object.provider.present?
+
+    false
   end
 end

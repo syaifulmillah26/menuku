@@ -10,6 +10,12 @@ module Officer
         @params = params
       end
 
+      def grab_all
+        [true, @params&.company&.outlets]
+      rescue StandardError => e
+        [false, e.message]
+      end
+
       def outlet_id
         ::Admin::Outlet.friendly.find(params[:outlet_id])&.id
       rescue ActiveRecord::RecordNotFound
