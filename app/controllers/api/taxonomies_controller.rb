@@ -3,8 +3,6 @@
 module Api
   # TaxonomiesController
   class TaxonomiesController < Api::ResourceController
-    before_action :authenticate_user, except: %i[index show products]
-
     # get all taxonomies
     def index
       @status, @result = Officer::Outlets::Taxonomies.new(

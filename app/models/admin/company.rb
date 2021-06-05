@@ -26,8 +26,7 @@ class Admin
     has_many    :admin_outlets,
                 lambda {
                   joins(:roles)
-                    .where(roles: { name: :admin })
-                    .where.not(outlet_id: nil)
+                    .where(roles: { name: :admin_outlet })
                 },
                 class_name: 'User',
                 foreign_key: :company_id
@@ -44,10 +43,18 @@ class Admin
                                   update_only: true,
                                   allow_destroy: true
 
+    after_create :set_owner
+
     private
 
     def check_uuid
       Admin::Company.where(uuid: @uuid)
+    end
+
+    def set_owner
+      user = ::User.find(object&.user_id)
+      user.company_id = object&.uuid
+      user.save
     end
   end
 end

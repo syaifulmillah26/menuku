@@ -3,13 +3,17 @@
 module Api
   # outlets api
   class OutletsController < Api::ResourceController
-    before_action :authenticate_user, except: %i[products product]
+    # before_action :authenticate_user, except: %i[products product]
 
     # Index
     def index
-      @objects = current_user&.company&.outlets
-      @all = total
-      render json: all_datas, status: :ok
+      @status, @result = Officer::Outlets::Main.new(
+        current_user
+      ).grab_all
+
+      return render json: @result, status: 422 unless @status
+
+      render json: results, status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 422
     end

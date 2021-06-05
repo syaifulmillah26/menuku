@@ -12,7 +12,9 @@ module Officer
       :user_attributes,
       :user_detail_attributes,
       :role_attributes,
-      :user_role_attributes
+      :user_role_attributes,
+      :order_attributes,
+      :order_item_attributes
     ]
 
     mattr_reader(*ATTRIBUTES)
@@ -45,6 +47,16 @@ module Officer
     @@role_attributes = %i[id name]
 
     @@user_role_attributes = %i[user_id role_id]
+
+    @@order_attributes = [
+      :item_count, :item_total, :total, :additional_tax,
+      :additional_services, :promo_total
+    ]
+
+    @@order_item_attributes = [
+      :product_id, :order_id, :is_cancel,
+      :quantity, :outlet_id
+    ]
 
     # @@address_book_attributes = address_attributes + [:default]
   end

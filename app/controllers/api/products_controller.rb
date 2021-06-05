@@ -3,8 +3,6 @@
 module Api
   # ProductsController
   class ProductsController < Api::ResourceController
-    before_action :authenticate_user, except: %i[index show]
-
     # show all products based on outlets
     def index
       @status, @result = Officer::Outlets::Products.new(

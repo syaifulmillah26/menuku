@@ -17,7 +17,7 @@ module Officer
         return false, { message: I18n.t('officer.not_found', r: 'Token') } \
         unless param_exists
 
-        @response = HTTParty.get(url)
+        @response = condition ? get(google_url) : get(facebook_url)
         return false, { message: 'invalid token' } if @response.code != 200
 
         [true, token]
@@ -27,8 +27,20 @@ module Officer
 
       private
 
-      def url
+      def condition
+        params[:provider] == 'google'
+      end
+
+      def get(url)
+        HTTParty.get(url)
+      end
+
+      def google_url
         ENV['GOOGLE_OAUTH2_URL'] + params['token']
+      end
+
+      def facebook_url
+        ENV['FACEBOOK_OAUTH2_URL'] + params['token']
       end
 
       def set_user
@@ -52,8 +64,9 @@ module Officer
       end
 
       def param_exists
-        params[:token].present?
-        params[:provider].present?
+        return true if params[:token].present? || params[:provider].present?
+
+        false
       end
     end
   end
