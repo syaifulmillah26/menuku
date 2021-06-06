@@ -20,7 +20,7 @@ module Officer
       # grap one taxonomy
       def grab_one
         return false, { message: t('officer.invalid_params') } if \
-          params[:id].blank?
+          params[:outlet_id].blank? || params[:id].blank?
 
         return false, { message: I18n.t('officer.not_found', r: 'Taxonomy') } \
           unless taxonomy

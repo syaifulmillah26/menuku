@@ -11,7 +11,7 @@ module Api
 
       return render json: @result, status: 422 unless @status
 
-      render json: @result, status: 200
+      render json: results, status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end
