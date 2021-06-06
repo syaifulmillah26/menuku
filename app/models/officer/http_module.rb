@@ -98,9 +98,8 @@ module HttpModule
   def normalize_url(url)
     uri  = URI.parse url
     host = uri.host
-    if host.blank?
-      uri = URI.parse "http://#{url}"
-    end
+
+    uri = URI.parse "http://#{url}" if host.blank?
 
     scheme = uri.scheme
     port   = uri.port.to_i

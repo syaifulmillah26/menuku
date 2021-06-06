@@ -1,4 +1,0 @@
-%p
-  Welcome #{@object.email}!
-%p We have generated your account, please reset your password below before continuing:
-%p= link_to 'Change my password', set_new_password_api_users_url + "?email=#{@object.email}&token=#{@object.reset_password_token}"

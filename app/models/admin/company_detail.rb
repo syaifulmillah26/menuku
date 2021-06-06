@@ -6,12 +6,14 @@ class Admin
   class CompanyDetail < Admin
     belongs_to  :company,
                 class_name: 'Admin::Company',
-                touch: true,
+                foreign_key: :company_id,
+                primary_key: :uuid,
                 optional: true
 
     belongs_to  :address,
                 class_name: 'Admin::Address',
-                dependent: :destroy
+                dependent: :destroy,
+                optional: true
 
     accepts_nested_attributes_for :address,
                                   update_only: true,

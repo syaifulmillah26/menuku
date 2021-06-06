@@ -13,7 +13,11 @@ module Api
     end
 
     def serializer(object)
-      ActiveModel::SerializableResource.new(object).as_json
+      ActiveModelSerializers::SerializableResource.new(object).as_json
+    end
+
+    def desc(object)
+      object&.order('id DESC')
     end
 
     def invalid_resource!(resource)
@@ -23,6 +27,10 @@ module Api
 
     def t(data)
       I18n.t(data)
+    end
+
+    def asset_path(filename)
+      ActionController::Base.helpers.asset_path(filename, digest: false)
     end
   end
 end

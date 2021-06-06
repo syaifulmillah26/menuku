@@ -4,6 +4,5 @@
 class Admin
   # class company from admin db
   class Address < Admin
-    # has_one :user_detail
   end
 end
