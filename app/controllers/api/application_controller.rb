@@ -28,5 +28,9 @@ module Api
     def t(data)
       I18n.t(data)
     end
+
+    def asset_path(filename)
+      ActionController::Base.helpers.asset_path(filename, digest: false)
+    end
   end
 end
