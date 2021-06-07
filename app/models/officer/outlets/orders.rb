@@ -24,6 +24,18 @@ module Officer
         [false, { message: "Error while grab order err: #{e}" }]
       end
 
+      def create
+        return false, { message: t('officer.invalid_params') } if \
+          params[:order].blank?
+
+        return false, { message: 'Table is booked' } if \
+          table_is_booked
+
+        [true, order_created]
+      rescue StandardError => e
+        [false, { message: "Error while grab order err: #{e}" }]
+      end
+
       # update order
       def update_order
         return false, { message: t('officer.invalid_params') } if \
@@ -65,6 +77,21 @@ module Officer
 
       def order
         Order.find(params[:id])
+      end
+
+      def table_is_booked
+        Table.find(params[:order][:table_id])
+      end
+
+      def order_created
+        order = Order.new(order_params)
+        order.save!
+        {
+          message: 'success',
+          data: order.as_json.merge(
+            items: order&.items
+          )
+        }
       end
 
       def results

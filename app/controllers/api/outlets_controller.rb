@@ -3,7 +3,8 @@
 module Api
   # outlets api
   class OutletsController < Api::ResourceController
-    # before_action :authenticate_user, except: %i[products product]
+    before_action :validate_company, only: %i[show update destroy]
+    skip_before_action :validate_outlet
 
     # Index
     def index
@@ -15,7 +16,7 @@ module Api
 
       render json: results, status: 200
     rescue StandardError => e
-      render json: { message: e.message }, status: 422
+      render json: { message: e.message }, status: 500
     end
 
     # get all products
@@ -42,6 +43,16 @@ module Api
       render json: @result, status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 500
+    end
+
+    private
+
+    def validate_company
+      outlets = current_user&.company&.outlets
+      outlet = Admin::Outlet.where(slug: params[:id])&.first
+      return root_not_found if outlet.blank?
+
+      return root_not_found unless outlets.include?(outlet)
     end
   end
 end

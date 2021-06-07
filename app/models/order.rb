@@ -31,17 +31,11 @@ class Order < ApplicationRecord
   private
 
   def generate_order_number
-    update_column(:order_number, set_order_number)
+    update_column(
+      :order_number,
+      check_generated_number('MN', generated_number, 'order_number', 1)
+    )
     book_table
-  end
-
-  def set_order_number
-    number = 'OR' + rand(1_000_000_000).to_s
-    number_exist = Order.where(order_number: number)&.first
-
-    return set_order_number if number_exist
-
-    number
   end
 
   def book_table

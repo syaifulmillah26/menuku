@@ -3,5 +3,6 @@
 module Api
   # CompaniesController
   class CompaniesController < Api::ResourceController
+    skip_before_action :validate_outlet
   end
 end

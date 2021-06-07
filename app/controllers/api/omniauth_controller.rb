@@ -4,6 +4,7 @@ module Api
   # OmniauthCallbacksController
   class OmniauthController < Api::ResourceController
     skip_before_action :authenticate_user
+    skip_before_action :validate_outlet
 
     # set login provider
     def request_provider

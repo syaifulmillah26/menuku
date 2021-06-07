@@ -23,6 +23,8 @@ module Knock
       {
         message: 'success',
         user_id: entity&.id,
+        company_id: entity&.company_id,
+        outlet_id: entity&.outlet_id,
         auth_token: auth_token&.token
       }
     end

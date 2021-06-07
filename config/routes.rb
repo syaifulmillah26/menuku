@@ -3,11 +3,11 @@
 Rails.application.routes.draw do
   scope '(:locale)', locale: /en|id/ do
     namespace :api do
-      resources :my_company, only: %i[index] do
-      end
 
       # backend routes
-      resources :companies, only: %i[create update]
+      resources :companies, only: %i[create show update] do
+
+      end
       resources :profile, only: %i[index] do
         collection do
           put :update_profile
@@ -30,9 +30,9 @@ Rails.application.routes.draw do
         resources :taxonomies
         resources :taxons
         resources :tables
+        resources :employees
+        get '/*path', to: 'taxonomies#products'
       end
-
-      resources :roles
       resources :users do
         collection do
           post :email_confirmation

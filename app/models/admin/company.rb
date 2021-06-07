@@ -31,7 +31,7 @@ class Admin
                 class_name: 'User',
                 foreign_key: :company_id
 
-    has_many    :all_employees,
+    has_many    :employees,
                 -> { where.not(outlet_id: nil) },
                 class_name: 'User',
                 foreign_key: :company_id

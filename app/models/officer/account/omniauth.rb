@@ -55,6 +55,8 @@ module Officer
         {
           message: 'success',
           user_id: @user&.id,
+          company_id: @user&.company_id,
+          outlet_id: @user&.outlet_id,
           auth_token: auth_token&.token
         }
       end

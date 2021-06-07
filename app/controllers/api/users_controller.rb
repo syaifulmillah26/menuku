@@ -5,7 +5,6 @@ module Api
   class UsersController < Api::ResourceController
     exception = %i[create email_confirmation forgot_password set_new_password]
     before_action :authenticate_user, except: exception
-
     # get all users based on company
     def index
       @objects = \

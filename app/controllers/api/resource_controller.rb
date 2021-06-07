@@ -6,6 +6,7 @@ module Api
     before_action :authenticate_user
     before_action :set_object, only: %i[show update destroy images]
     helper_method :permitted_resource_params
+    before_action :validate_outlet
 
     def index
       @objects = model_class.all
@@ -101,38 +102,6 @@ module Api
 
     def object_name
       controller_name.singularize
-    end
-
-    def limit
-      @objects = @objects.limit(params[:limit])
-    end
-
-    def offset
-      @objects = @objects.offset(params[:offset])
-    end
-
-    def total
-      @objects&.count
-    end
-
-    def results
-      @objects = @result
-      @all = total
-      all_datas
-    end
-
-    def all_datas
-      check_limit_and_offset
-      {
-        message: t('officer.success'), total: @all,
-        limit: params[:limit], offset: params[:offset],
-        data: serializer(desc(@objects))
-      }
-    end
-
-    def check_limit_and_offset
-      limit if params[:limit].present?
-      offset if params[:offset].present?
     end
   end
 end
