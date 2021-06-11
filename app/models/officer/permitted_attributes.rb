@@ -50,7 +50,7 @@ module Officer
 
     @@order_attributes = [
       :item_count, :item_total, :total, :additional_tax,
-      :additional_services, :promo_total
+      :additional_services, :promo_total, :outlet_id, :table_id
     ]
 
     @@order_item_attributes = [

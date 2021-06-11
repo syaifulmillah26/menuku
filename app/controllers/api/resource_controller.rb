@@ -49,11 +49,7 @@ module Api
     end
 
     def destroy
-      data = { message: 'You have no right to do this' }
-      return render json: data, status: 422 unless admin_permission
-
-      return invalid_resource!(@object) unless @object.destroy
-
+      @object.destroy!
       render json: { message: t('officer.success') }, status: :ok
     rescue StandardError => e
       render json: { error: e.message }, status: 500

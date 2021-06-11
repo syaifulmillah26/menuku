@@ -117,6 +117,7 @@ GEM
       railties (>= 3.2)
     erubi (1.10.0)
     erubis (2.7.0)
+    excon (0.82.0)
     execjs (2.7.0)
     ffi (1.15.0)
     friendly_id (5.4.2)
@@ -265,6 +266,8 @@ GEM
     tilt (2.0.10)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
+    veritrans (2.3.0)
+      excon (~> 0.20)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.1.0)
@@ -319,6 +322,7 @@ DEPENDENCIES
   spring
   state_machines-activerecord
   tzinfo-data
+  veritrans
   web-console (>= 4.1.0)
   webdrivers
 
@@ -326,4 +330,4 @@ RUBY VERSION
    ruby 2.5.3p105
 
 BUNDLED WITH
-   2.2.1
+   2.2.19

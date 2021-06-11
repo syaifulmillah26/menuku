@@ -54,7 +54,10 @@ module Officer
       end
 
       def order_items
-        ::OrderItem.where(outlet_id: outlet_id)
+        ::OrderItem.where(
+          outlet_id: outlet_id,
+          order_id: params[:order_id]
+        )
       end
 
       def result

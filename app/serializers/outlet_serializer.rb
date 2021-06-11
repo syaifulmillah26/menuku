@@ -2,5 +2,5 @@
 
 # OutletSerializer
 class OutletSerializer < ActiveModel::Serializer
-  attributes :id, :name, :status, :address
+  attributes :id, :name, :slug, :status, :address
 end

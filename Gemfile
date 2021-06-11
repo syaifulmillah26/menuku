@@ -27,6 +27,7 @@ gem 'active_model_serializers'
 gem 'dotenv-rails', groups: [:development, :test]
 gem 'rails-i18n'
 gem 'ancestry'
+gem 'veritrans'
 
 # Use Puma as the app server
 gem 'puma', '~> 5.0'

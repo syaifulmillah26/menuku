@@ -3,7 +3,6 @@
 Rails.application.routes.draw do
   scope '(:locale)', locale: /en|id/ do
     namespace :api do
-
       # backend routes
       resources :companies, only: %i[create show update] do
 
@@ -14,25 +13,24 @@ Rails.application.routes.draw do
           put :update_password
         end
       end
-      resources :outlets do
-        resources :orders do
-          member do
-            post :confirm_order
-            post :finish_order
-          end
+      resources :outlets
+      resources :orders do
+        member do
+          post :confirm_order
+          post :finish_order
         end
-        resources :order_items
-        resources :products do
-          collection do
-            post :set_product_image
-          end
-        end
-        resources :taxonomies
-        resources :taxons
-        resources :tables
-        resources :employees
-        get '/*path', to: 'taxonomies#products'
       end
+      resources :order_items
+      resources :products do
+        collection do
+          post :set_product_image
+        end
+      end
+      resources :taxonomies
+      resources :taxons
+      resources :tables
+      resources :employees
+
       resources :users do
         collection do
           post :email_confirmation
@@ -45,6 +43,7 @@ Rails.application.routes.draw do
       post '/auth/signin', to: 'user_token#create'
       post '/auth/signup', to: 'users#create'
       post '/auth/request', to: 'omniauth#request_provider'
+      get '/*path', to: 'taxonomies#products'
 
       namespace :frontend do
         get '/', to: 'tables#index'

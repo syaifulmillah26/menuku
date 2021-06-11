@@ -23,6 +23,13 @@ class User < ApplicationRecord
               primary_key: :uuid,
               optional: true
 
+  belongs_to  :outlet,
+              class_name: 'Admin::Outlet',
+              foreign_key: :outlet_id,
+              primary_key: :uuid,
+              optional: true,
+              dependent: :destroy
+
   has_one     :user_detail,
               class_name: 'UserDetail',
               foreign_key: :user_id,
@@ -36,6 +43,8 @@ class User < ApplicationRecord
   after_create :send_email_confirmation
 
   accepts_nested_attributes_for :user_detail
+
+  validates_uniqueness_of :email
 
   def self.create_user_provider(data, provider)
     where(email: data['email']).first_or_initialize.tap do |user|

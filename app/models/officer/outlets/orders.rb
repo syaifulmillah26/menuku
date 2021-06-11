@@ -41,6 +41,9 @@ module Officer
         return false, { message: t('officer.invalid_params') } if \
           params[:order].blank?
 
+        return false, { message: 'Order is already done' } if \
+          order.done?
+
         order.update(order_params)
         [true, results]
       rescue StandardError => e

@@ -8,12 +8,13 @@ module Api
     before_action :authenticate_user
     undef_method :current_user
 
-    def admin_permission
-      current_user.is_admin?
-    end
-
     def serializer(object)
       ActiveModelSerializers::SerializableResource.new(object).as_json
+    end
+
+    def set_admin_permission
+      return render json: { message: 'no permission' } \
+        unless current_user.is_admin?
     end
 
     def desc(object)
@@ -33,9 +34,17 @@ module Api
       ActionController::Base.helpers.asset_path(filename, digest: false)
     end
 
+    def validate_company
+      company = Admin::Company.where(uuid: params[:company_id])&.first
+      return render json: { message: 'invalid company id' }, status: 422 if \
+        current_user&.company&.id != company&.id
+    rescue StandardError => e
+      render json: { message: e.message }, status: 500
+    end
+
     def validate_outlet
-      outlet = Admin::Outlet.where(slug: params[:outlet_id])&.first
-      return root_not_found if \
+      outlet = Admin::Outlet.where(uuid: params[:outlet_id])&.first
+      return render json: { message: 'invalid outlet id' }, status: 422 if \
         current_user&.company&.id != outlet&.company_id
     rescue StandardError => e
       render json: { message: e.message }, status: 500

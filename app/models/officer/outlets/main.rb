@@ -3,7 +3,7 @@
 module Officer
   module Outlets
     # Main
-    class Main < ::Api::ApplicationController
+    class Main < Api::ApplicationController
       attr_reader :params
 
       def initialize(params)
@@ -11,7 +11,7 @@ module Officer
       end
 
       def grab_all
-        [true, @params&.company&.outlets]
+        [true, params&.company&.outlets]
       rescue StandardError => e
         [false, e.message]
       end
