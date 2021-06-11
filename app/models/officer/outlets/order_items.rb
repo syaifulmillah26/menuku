@@ -68,7 +68,30 @@ module Officer
       end
 
       def save_order_item
+        ensure_order_exist
+
         @item = ::OrderItem.create!(order_item_params)
+      end
+
+      def ensure_order_exist
+        order = ::Order.where(
+          outlet_id: outlet_id,
+          table_id: params[:table_id]
+        )&.first
+
+        return params[:order_item][:order_id] = order&.id if \
+          order
+
+        create_order
+      end
+
+      def create_order
+        order = ::Order.create(
+          outlet_id: outlet_id,
+          table_id: params[:table_id]
+        )
+
+        params[:order_item][:order_id] = order.id
       end
 
       def update_order_item

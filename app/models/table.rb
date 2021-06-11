@@ -18,10 +18,6 @@ class Table < ApplicationRecord
 
   private
 
-  def set_guest_access
-    update_column(:guest_access, set_number)
-  end
-
   def set_number
     number = rand(1_000_000)
     number_exist = Table.where(guest_access: number)&.first
@@ -29,9 +25,5 @@ class Table < ApplicationRecord
     return set_number if number_exist
 
     number
-  end
-
-  def remove_guest_access
-    update_column(:guest_access, nil)
   end
 end

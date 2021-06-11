@@ -14,6 +14,10 @@ module StateMachines
 
         after_transition to: :confirmed, do: :update_confirmed_at
       end
+
+      def update_confirmed_at
+        update_column(:confirmed_at, current_time)
+      end
     end
   end
 end

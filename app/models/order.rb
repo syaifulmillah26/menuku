@@ -35,16 +35,5 @@ class Order < ApplicationRecord
       :order_number,
       check_generated_number('MN', generated_number, 'order_number', 1)
     )
-    book_table
-  end
-
-  def book_table
-    table = Table.find(object&.table_id)
-    table.booked!
-  end
-
-  def free_table
-    table = Table.find(object&.table_id)
-    table.available!
   end
 end

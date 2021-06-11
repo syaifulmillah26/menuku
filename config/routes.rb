@@ -21,6 +21,13 @@ Rails.application.routes.draw do
         end
       end
       resources :order_items
+      resources :payment_methods, only: %i[index]
+      resources :payments do
+        collection do
+          post :midtrans
+          post :midtrans_callback
+        end
+      end
       resources :products do
         collection do
           post :set_product_image
@@ -28,7 +35,12 @@ Rails.application.routes.draw do
       end
       resources :taxonomies
       resources :taxons
-      resources :tables
+      resources :tables do
+        member do
+          post :book
+          post :free
+        end
+      end
       resources :employees
 
       resources :users do

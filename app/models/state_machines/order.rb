@@ -16,6 +16,11 @@ module StateMachines
 
         after_transition to: :done, do: :free_table
       end
+
+      def free_table
+        table = Table.find(object&.table_id)
+        table.available!
+      end
     end
   end
 end

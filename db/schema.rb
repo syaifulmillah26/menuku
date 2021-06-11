@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_11_165844) do
+ActiveRecord::Schema.define(version: 2021_06_11_205829) do
 
   create_table "action_text_rich_texts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -76,51 +76,39 @@ ActiveRecord::Schema.define(version: 2021_06_11_165844) do
     t.integer "table_id", null: false
     t.string "order_number"
     t.integer "item_count", default: 0
-    t.decimal "item_total", precision: 10, scale: 2
-    t.decimal "total", precision: 10, scale: 2
-    t.decimal "additional_tax", precision: 10, scale: 2
-    t.decimal "additional_services", precision: 10, scale: 2
-    t.decimal "promo_total", precision: 10, scale: 2
+    t.decimal "item_total", precision: 10, scale: 2, default: "0.0"
+    t.decimal "total", precision: 10, scale: 2, default: "0.0"
+    t.decimal "additional_tax", precision: 10, scale: 2, default: "0.0"
+    t.decimal "additional_services", precision: 10, scale: 2, default: "0.0"
+    t.decimal "promo_total", precision: 10, scale: 2, default: "0.0"
     t.string "status"
+    t.string "payment_preference"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "payment_methods", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "type"
     t.string "name"
-    t.text "description"
-    t.boolean "active", default: true
-    t.datetime "deleted_at"
-    t.string "display_on"
-    t.boolean "auto_capture"
-    t.text "preferences"
-    t.string "preference_source"
-    t.integer "position", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["id", "type"], name: "index_spree_payment_methods_on_id_and_type"
   end
 
   create_table "payments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.decimal "amount", precision: 10, scale: 2, default: "0.0", null: false
     t.integer "order_id"
-    t.string "source_type"
-    t.integer "source_id"
     t.integer "payment_method_id"
     t.string "state"
-    t.string "response_code"
-    t.string "avs_response"
     t.string "number"
-    t.string "cvv_response_code"
-    t.string "cvv_response_message"
+    t.string "card_number"
+    t.string "card_name"
+    t.string "card_expired"
+    t.string "cvv_number"
     t.string "midtrans_trnsaction_id"
     t.string "midtrans_transaction_status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["order_id"], name: "index_spree_payments_on_order_id"
-    t.index ["payment_method_id"], name: "index_spree_payments_on_payment_method_id"
-    t.index ["source_id", "source_type"], name: "index_spree_payments_on_source_id_and_source_type"
+    t.index ["order_id"], name: "index_payments_on_order_id"
+    t.index ["payment_method_id"], name: "index_payments_on_payment_method_id"
   end
 
   create_table "prices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|

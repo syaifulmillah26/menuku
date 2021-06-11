@@ -74,10 +74,6 @@ class User < ApplicationRecord
     object.add_role(:admin) if object.roles.blank?
   end
 
-  def update_confirmed_at
-    update_column(:confirmed_at, current_time)
-  end
-
   def company_or_provider_exist
     return true if object.company_id.present? || object.provider.present?
 

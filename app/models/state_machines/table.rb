@@ -17,6 +17,14 @@ module StateMachines
         after_transition to: :booked, do: :set_guest_access
         after_transition to: :available, do: :remove_guest_access
       end
+
+      def set_guest_access
+        update_column(:guest_access, set_number)
+      end
+
+      def remove_guest_access
+        update_column(:guest_access, nil)
+      end
     end
   end
 end

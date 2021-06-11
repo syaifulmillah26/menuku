@@ -8,3 +8,4 @@
 
 # run this before start
 roles = Role.create([{ name: 'admin' }, { name: 'admin_outlet' }])
+payment_methods = PaymentMethod.create([{ name: 'Credit Card' }, { name: 'Debit' }, { name: 'Cash' }, { name: 'Others' }])
