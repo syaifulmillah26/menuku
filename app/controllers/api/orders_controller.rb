@@ -3,54 +3,10 @@
 module Api
   # OrdersCOntroller
   class OrdersController < Api::ResourceController
-    # Index
-    def index
-      @status, @result = Officer::Outlets::Orders.new(
-        params
-      ).grab_all
+    before_action :set_object, only: %i[show update destroy confirm_order finish_order]
+    before_action :validate_object, only: %i[show update destroy confirm_order finish_order]
 
-      return render json: @result, status: 422 unless @status
-
-      render json: results, status: 200
-    rescue StandardError => e
-      render json: { message: e.message }, status: 500
-    end
-
-    def create
-      @status, @result = Officer::Outlets::Orders.new(
-        params
-      ).create
-      return render json: @result, status: 422 unless @status
-
-      render json: @result, status: 200
-    rescue StandardError => e
-      render json: { message: e.message }, status: 500
-    end
-
-    def show
-      @status, @result = Officer::Outlets::Orders.new(
-        params
-      ).grab_one
-
-      return render json: @result, status: 422 unless @status
-
-      render json: @result, status: 200
-    rescue StandardError => e
-      render json: { message: e.message }, status: 500
-    end
-
-    def update
-      @status, @result = Officer::Outlets::Orders.new(
-        params
-      ).update_order
-
-      return render json: @result, status: 422 unless @status
-
-      render json: @result, status: 200
-    rescue StandardError => e
-      render json: { message: e.message }, status: 500
-    end
-
+    # confirming order
     def confirm_order
       @status, @result = Officer::Outlets::Orders.new(
         params

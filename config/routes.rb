@@ -4,33 +4,30 @@ Rails.application.routes.draw do
   scope '(:locale)', locale: /en|id/ do
     namespace :api do
       # backend routes
-      resources :companies, only: %i[create show update] do
 
-      end
       resources :profile, only: %i[index] do
         collection do
           put :update_profile
           put :update_password
         end
       end
-      resources :outlets
+      resources :outlets, only: %i[index update create]
       resources :orders do
         member do
           post :confirm_order
           post :finish_order
         end
       end
-      resources :order_items
+      resources :line_items
       resources :payment_methods, only: %i[index]
       resources :payments do
         collection do
-          post :midtrans
           post :midtrans_callback
         end
       end
       resources :products do
         collection do
-          post :set_product_image
+          post :set_image
         end
       end
       resources :taxonomies
@@ -42,6 +39,7 @@ Rails.application.routes.draw do
         end
       end
       resources :employees
+      resources :roles
 
       resources :users do
         collection do
@@ -55,7 +53,6 @@ Rails.application.routes.draw do
       post '/auth/signin', to: 'user_token#create'
       post '/auth/signup', to: 'users#create'
       post '/auth/request', to: 'omniauth#request_provider'
-      get '/*path', to: 'taxonomies#products'
 
       namespace :frontend do
         get '/', to: 'tables#index'
@@ -66,15 +63,16 @@ Rails.application.routes.draw do
         put '/orders/:id', to: 'orders#update'
 
         post '/orders/:id/confirm_order', to: 'orders#confirm_order'
-        post '/order_items', to: 'order_items#create'
-        put '/order_items/:id', to: 'order_items#update'
-        delete '/order_items/:id', to: 'order_items#destroy'
+        post '/line_items', to: 'line_items#create'
+        put '/line_items/:id', to: 'line_items#update'
+        delete '/line_items/:id', to: 'line_items#destroy'
 
         get '/taxonomies', to: 'taxonomies#index'
         get '/taxonomies/:id', to: 'taxonomies#show'
         get '/*path', to: 'taxonomies#products'
         match '/*path', to: 'error#handle_root_not_found', via: :all
       end
+      get '/*path', to: 'taxonomies#products'
       match '/*path', to: 'error#handle_root_not_found', via: :all
     end
   end

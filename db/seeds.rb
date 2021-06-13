@@ -7,5 +7,4 @@
 #   Character.create(name: 'Luke', movie: movies.first)
 
 # run this before start
-roles = Role.create([{ name: 'admin' }, { name: 'admin_outlet' }])
 payment_methods = PaymentMethod.create([{ name: 'Credit Card' }, { name: 'Debit' }, { name: 'Cash' }, { name: 'Others' }])

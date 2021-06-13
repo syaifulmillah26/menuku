@@ -20,10 +20,7 @@ module Officer
       # Grab one product based on outlet
       def grab_one
         return false, { message: t('officer.invalid_params') } if \
-          params[:outlet_id].blank? || params[:id].blank?
-
-        return false, { message: I18n.t('officer.not_found', r: 'Outlet') } \
-          unless outlet_id
+          params[:id].blank?
 
         product
       rescue StandardError => e

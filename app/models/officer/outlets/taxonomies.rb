@@ -6,9 +6,6 @@ module Officer
     class Taxonomies < Main
       # grab all taxonomies
       def grab_all
-        return false, { message: t('officer.invalid_params') } if \
-          params[:outlet_id].blank?
-
         return false, { message: I18n.t('officer.not_found', r: 'Taxonomies') } \
           unless taxonomies
 
@@ -19,9 +16,6 @@ module Officer
 
       # grap one taxonomy
       def grab_one
-        return false, { message: t('officer.invalid_params') } if \
-          params[:outlet_id].blank? || params[:id].blank?
-
         return false, { message: I18n.t('officer.not_found', r: 'Taxonomy') } \
           unless taxonomy
 
@@ -37,7 +31,7 @@ module Officer
       end
 
       def taxonomy
-        ::Taxonomy.find(params[:id])
+        ::Taxonomy.find_by(id: params[:id], outlet_id: outlet_id)
       rescue ActiveRecord::RecordNotFound
         false
       end

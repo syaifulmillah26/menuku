@@ -5,6 +5,8 @@ class Payment < ApplicationRecord
   include ApplicationHelper
   include StateMachines::Payment
 
+  serialize :midtrans_response, Array
+
   belongs_to    :payment_method,
                 class_name: 'PaymentMethod'
 

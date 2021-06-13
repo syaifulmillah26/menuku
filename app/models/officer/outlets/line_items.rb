@@ -2,24 +2,14 @@
 
 module Officer
   module Outlets
-    # Orders
-    class OrderItems < Main
-      # grab all orders
-      def grab_all
-        return false, { message: t('officer.invalid_params') } if \
-          params[:outlet_id].blank?
-
-        [true, order_items]
-      rescue StandardError => e
-        [false, e.message]
-      end
-
+    # Line Items
+    class LineItems < Main
       # add item
       def add
         return false, { message: t('officer.invalid_params') } if \
-          params[:order_item].blank?
+          params[:line_item].blank?
 
-        save_order_item
+        save_line_item
         [true, result]
       rescue StandardError => e
         [false, { message: e.message }]
@@ -28,10 +18,10 @@ module Officer
       # update item
       def update
         return false, { message: t('officer.invalid_params') } if \
-          params[:order_item].blank?
+          params[:line_item].blank?
 
-        update_order_item
-        [true, order_item]
+        line_item.update(line_item_params) if table_is_match?
+        [true, line_item]
       rescue StandardError => e
         [false, { message: e.message }]
       end
@@ -41,7 +31,7 @@ module Officer
         return false, { message: t('officer.invalid_params') } if \
           params[:id].blank?
 
-        order_item.destroy!
+        line_item.destroy! if table_is_match?
         [true, { message: 'success' }]
       rescue StandardError => e
         [false, { message: e.message }]
@@ -49,14 +39,16 @@ module Officer
 
       private
 
-      def order_item
-        ::OrderItem.find(params[:id])
+      def line_item
+        ::LineItem.find_by(
+          id: params[:id],
+          outlet_id: outlet_id
+        )
       end
 
-      def order_items
-        ::OrderItem.where(
-          outlet_id: outlet_id,
-          order_id: params[:order_id]
+      def line_items
+        ::LineItem.where(
+          outlet_id: outlet_id
         )
       end
 
@@ -67,43 +59,43 @@ module Officer
         }
       end
 
-      def save_order_item
+      def save_line_item
         ensure_order_exist
 
-        @item = ::OrderItem.create!(order_item_params)
+        @item = ::LineItem.create!(line_item_params)
       end
 
       def ensure_order_exist
-        order = ::Order.where(
+        order = ::Order.find_by(
           outlet_id: outlet_id,
           table_id: params[:table_id]
-        )&.first
+        )
 
-        return params[:order_item][:order_id] = order&.id if \
+        return params[:line_item][:order_id] = order&.id if \
           order
 
         create_order
       end
 
       def create_order
-        order = ::Order.create(
+        order = ::Order.create!(
           outlet_id: outlet_id,
           table_id: params[:table_id]
         )
 
-        params[:order_item][:order_id] = order.id
+        params[:line_item][:order_id] = order.id
       end
 
-      def update_order_item
-        order_item.update(order_item_params)
+      def table_is_match?
+        line_item.order.table_id == params[:table_id]
       end
 
-      def order_item_params
-        params[:order_item].permit(permitted_params)
+      def line_item_params
+        params[:line_item].permit(permitted_params)
       end
 
       def permitted_params
-        ::Officer::PermittedAttributes.order_item_attributes
+        ::Officer::PermittedAttributes.line_item_attributes
       end
     end
   end

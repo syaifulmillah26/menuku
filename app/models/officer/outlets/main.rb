@@ -8,18 +8,17 @@ module Officer
 
       def initialize(params)
         @params = params
+        @outlet = params[:outlet]
       end
 
-      def grab_all
-        [true, params&.company&.outlets]
+      def grab_one
+        [true, serializer(@outlet)]
       rescue StandardError => e
         [false, e.message]
       end
 
       def outlet_id
-        ::Admin::Outlet.friendly.find(params[:outlet_id])&.id
-      rescue ActiveRecord::RecordNotFound
-        false
+        @outlet&.id
       end
 
       def taxon

@@ -3,41 +3,22 @@
 module Api
   # TablesControlller
   class TablesController < Api::ResourceController
-    # Index
-    def index
-      @status, @result = Officer::Outlets::Tables.new(
-        params
-      ).grab_all
-
-      return render json: @result, status: 422 unless @status
-
-      render json: results, status: 200
-    rescue StandardError => e
-      render json: { message: e.message }, status: 422
-    end
-
+    before_action :set_object, only: %i[show update destroy book free]
+    before_action :validate_object, only: %i[show update destroy book free]
     # Book table
     def book
-      @status, @result = Officer::Outlets::Tables.new(
-        params
-      ).book_table
+      @object.booked!
 
-      return render json: @result, status: 422 unless @status
-
-      render json: @result, status: 200
+      render json: { message: t('officer.success') }, status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 422
     end
 
     # Free table
     def free
-      @status, @result = Officer::Outlets::Tables.new(
-        params
-      ).free_table
+      @object.available!
 
-      return render json: @result, status: 422 unless @status
-
-      render json: @result, status: 200
+      render json: { message: t('officer.success') }, status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 422
     end

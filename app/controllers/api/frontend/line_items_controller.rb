@@ -2,8 +2,8 @@
 
 module Api
   module Frontend
-    # OrderItems
-    class OrderItemsController < Api::Frontend::ResourceController
+    # LineItems
+    class LineItemsController < Api::Frontend::ResourceController
       # get table details
       def index
         render json: guest_access_detail, status: 200
@@ -12,7 +12,7 @@ module Api
       end
 
       def create
-        @status, @result = Officer::Outlets::OrderItems.new(
+        @status, @result = Officer::Outlets::LineItems.new(
           params
         ).add
 
@@ -24,7 +24,7 @@ module Api
       end
 
       def update
-        @status, @result = Officer::Outlets::OrderItems.new(
+        @status, @result = Officer::Outlets::LineItems.new(
           params
         ).update
 
@@ -36,7 +36,7 @@ module Api
       end
 
       def destroy
-        @status, @result = Officer::Outlets::OrderItems.new(
+        @status, @result = Officer::Outlets::LineItems.new(
           params
         ).remove
 

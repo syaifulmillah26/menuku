@@ -12,6 +12,22 @@ module Api
       ActiveModelSerializers::SerializableResource.new(object).as_json
     end
 
+    def company
+      current_user.company
+    end
+
+    def company_id
+      company.id
+    end
+
+    def outlet
+      current_user.outlet
+    end
+
+    def outlet_id
+      current_user.outlet_id
+    end
+
     def set_admin_permission
       return render json: { message: 'no permission' } \
         unless current_user.is_admin?
@@ -34,22 +50,6 @@ module Api
       ActionController::Base.helpers.asset_path(filename, digest: false)
     end
 
-    def validate_company
-      company = Admin::Company.where(uuid: params[:company_id])&.first
-      return render json: { message: 'invalid company id' }, status: 422 if \
-        current_user&.company&.id != company&.id
-    rescue StandardError => e
-      render json: { message: e.message }, status: 500
-    end
-
-    def validate_outlet
-      outlet = Admin::Outlet.where(uuid: params[:outlet_id])&.first
-      return render json: { message: 'invalid outlet id' }, status: 422 if \
-        current_user&.company&.id != outlet&.company_id
-    rescue StandardError => e
-      render json: { message: e.message }, status: 500
-    end
-
     def limit
       @objects = @objects.limit(params[:limit])
     end
@@ -60,6 +60,13 @@ module Api
 
     def total
       @objects&.count
+    end
+
+    def result
+      {
+        message: t('officer.success'),
+        data: serializer(@result)
+      }
     end
 
     def results

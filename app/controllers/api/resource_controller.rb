@@ -4,14 +4,16 @@ module Api
   # resource class
   class ResourceController < Api::ApplicationController
     before_action :authenticate_user
-    before_action :set_object, only: %i[show update destroy images]
+    before_action :set_params_outlet
+    before_action :set_object, only: %i[show update destroy]
+    before_action :validate_object, only: %i[show update destroy]
+    before_action :set_outlet_id, only: %i[create]
     helper_method :permitted_resource_params
-    before_action :validate_outlet
 
     def index
-      @objects = model_class.all
-      @all = total
-      render json: all_datas, status: 200
+      @result = model_class.where(outlet_id: outlet_id)
+
+      render json: results, status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end
@@ -70,12 +72,24 @@ module Api
     private
 
     def set_object
-      return @object = model_class.friendly.find(params[:id]) if \
-        model_class == Admin::Outlet || model_class == Product
+      return @object = friendly_object if friendly_object
 
-      @object = model_class.find(params[:id])
+      @object = model_class.find_by(
+        id: params[:id],
+        outlet_id: outlet_id
+      )
     rescue StandardError => e
       render json: { error: e.message }, status: 500
+    end
+
+    def friendly_object
+      model_class.friendly.find(params[:id]) if \
+        model_class == Product
+    end
+
+    def validate_object
+      message = { message: "#{model_class.model_name.human} not found" }
+      return render json: message, status: 400 if @object.blank?
     end
 
     def permitted_resource_params
@@ -98,6 +112,14 @@ module Api
 
     def object_name
       controller_name.singularize
+    end
+
+    def set_outlet_id
+      params[object_name][:outlet_id] = outlet_id
+    end
+
+    def set_params_outlet
+      params[:outlet] = outlet
     end
   end
 end

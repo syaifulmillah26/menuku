@@ -3,19 +3,22 @@
 module Api
   # outlets api
   class OutletsController < Api::ResourceController
-    before_action :validate_company
-    before_action :validate_outlet, only: %i[update destroy]
+    skip_before_action :authenticate_user, only: %i[create]
+    skip_before_action :set_outlet_id
     # Index
     def index
-      @status, @result = Officer::Outlets::Main.new(
-        current_user
-      ).grab_all
-
-      return render json: @result, status: 422 unless @status
-
-      render json: results, status: 200
+      render json: load_data, status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 500
+    end
+
+    private
+
+    def load_data
+      {
+        message: t('officer.success'),
+        data: serializer(current_user.outlet)
+      }
     end
   end
 end

@@ -6,8 +6,7 @@ class Table < ApplicationRecord
   belongs_to  :outlet,
               class_name: 'Admin::Outlet',
               foreign_key: :outlet_id,
-              primary_key: :uuid,
-              optional: true
+              primary_key: :uuid
 
   scope :availables, -> { where(status: 'available') }
   scope :booked, -> { where(status: 'booked') }
@@ -15,15 +14,4 @@ class Table < ApplicationRecord
   has_one     :active_order,
               -> { where status: %w[draft confirmed] },
               class_name: 'Order'
-
-  private
-
-  def set_number
-    number = rand(1_000_000)
-    number_exist = Table.where(guest_access: number)&.first
-
-    return set_number if number_exist
-
-    number
-  end
 end
