@@ -3,9 +3,7 @@
 module Api
   # Employees controller
   class EmployeesController < Api::ResourceController
-    skip_before_action :set_object
-    before_action :set_object_employee, only: %i[show update destroy images]
-    before_action :set_company_id
+    before_action :set_company_id, only: :create
 
     private
 

@@ -3,8 +3,9 @@
 module Api
   # TablesControlller
   class TablesController < Api::ResourceController
-    before_action :set_object, only: %i[show update destroy book free]
-    before_action :validate_object, only: %i[show update destroy book free]
+    exception = %i[show update destroy book free]
+    before_action :set_object, only: exception
+    before_action :validate_object, only: exception
     # Book table
     def book
       @object.booked!

@@ -4,7 +4,7 @@
 class User < ApplicationRecord
   include StateMachines::User
   include ApplicationHelper
-  include UuidHelper
+  include MailHelper
 
   acts_as_paranoid
 
@@ -13,36 +13,26 @@ class User < ApplicationRecord
           :trackable and :omniauthable
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   alias_method :authenticate, :valid_password?
-  extend FriendlyId
-  friendly_id :uuid, use: :slugged
+  # extend FriendlyId
+  # friendly_id :uuid, use: :slugged
   rolify
 
   belongs_to  :company,
               class_name: 'Admin::Company',
-              foreign_key: :company_id,
-              primary_key: :uuid,
               optional: true
 
   belongs_to  :outlet,
               class_name: 'Admin::Outlet',
-              foreign_key: :outlet_id,
-              primary_key: :uuid,
-              optional: true,
-              dependent: :destroy
+              optional: true
 
   has_one     :user_detail,
               class_name: 'UserDetail',
-              foreign_key: :user_id,
-              primary_key: :uuid,
               dependent: :destroy,
               inverse_of: :user
 
-  has_one     :address, through: :user_detail
-
-  after_create :assign_default_role
-  after_create :send_email_confirmation
-
-  accepts_nested_attributes_for :user_detail
+  accepts_nested_attributes_for :user_detail,
+                                update_only: true,
+                                allow_destroy: true
 
   validates_uniqueness_of :email
 
@@ -54,29 +44,5 @@ class User < ApplicationRecord
       user.password_confirmation = user.password
       user.save!
     end
-  end
-
-  private
-
-  def check_uuid
-    User.where(uuid: @uuid)
-  end
-
-  def send_email_confirmation
-    return object.confirm! if company_or_provider_exist
-
-    update_column(:confirmation_token, secure_random_token)
-    update_column(:confirmation_sent_at, current_time)
-    DeviseMailer.with(object: object).confirmation_instructions.deliver_later
-  end
-
-  def assign_default_role
-    object.add_role(:admin) if object.roles.blank?
-  end
-
-  def company_or_provider_exist
-    return true if object.company_id.present? || object.provider.present?
-
-    false
   end
 end

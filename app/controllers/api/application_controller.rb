@@ -28,9 +28,10 @@ module Api
       current_user.outlet_id
     end
 
-    def set_admin_permission
-      return render json: { message: 'no permission' } \
-        unless current_user.is_admin?
+    def authenticate_admin
+      return if current_user.is_admin?
+
+      root_not_found
     end
 
     def desc(object)
@@ -62,15 +63,15 @@ module Api
       @objects&.count
     end
 
-    def result
+    def result(data)
       {
         message: t('officer.success'),
-        data: serializer(@result)
+        data: serializer(data)
       }
     end
 
-    def results
-      @objects = @result
+    def results(datas)
+      @objects = datas
       @all = total
       all_datas
     end
@@ -93,6 +94,14 @@ module Api
       render json: {
         message: I18n.t('officer.not_found', r: 'Route')
       }, status: 404
+    end
+
+    def render_error(message)
+      render json: { message: message }, status: 422
+    end
+
+    def error_message(message)
+      [422, { message: message }]
     end
   end
 end

@@ -8,10 +8,7 @@ class Product < ApplicationRecord
   friendly_id :name, use: :slugged
 
   belongs_to  :outlet,
-              class_name: 'Admin::outlet',
-              dependent: :destroy,
-              foreign_key: :outlet_id,
-              primary_key: :uuid,
+              class_name: 'Admin::Outlet',
               optional: true
 
   has_one_attached :image, dependent: :destroy

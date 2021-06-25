@@ -9,22 +9,19 @@ module Knock
 
     def create
       render json: token, status: :created
+    rescue StandardError => e
+      render json: { message: e.message }, status: 500
     end
 
     private
 
     def authenticate
       entity?
-    rescue StandardError => e
-      render json: { message: e.message }, status: 500
     end
 
     def token
       {
         message: 'success',
-        user_id: entity&.id,
-        company_id: entity&.company_id,
-        outlet_id: entity&.outlet_id,
         auth_token: auth_token&.token
       }
     end
@@ -59,24 +56,23 @@ module Knock
     end
 
     def entity?
-      data = { message: 'User is not registered yet' }
+      data = { message: t('officer.account.email.not_registered') }
       return render json: data, status: 422 unless entity
 
       inactive_entity?
     end
 
     def inactive_entity?
-      data = { message: 'Please ask your admin to activate your account' }
+      data = { message: t('officer.account.email.inactive') }
       return render json: data, status: 422 if entity.inactive?
 
-      wrong_email_or_pass?
-      # inactive_company?
+      valid_password?
     end
 
-    def wrong_email_or_pass?
-      wrong_email_or_pass = entity.authenticate(auth_params[:password])
-      data = { message: 'Wrong email or password' }
-      return render json: data, status: 422 unless wrong_email_or_pass
+    def valid_password?
+      valid_password = entity.authenticate(auth_params[:password])
+      data = { message: t('officer.account.wrong_password') }
+      return render json: data, status: 422 unless valid_password
     end
 
     # def inactive_company?

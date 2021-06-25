@@ -11,9 +11,9 @@ module Api
     helper_method :permitted_resource_params
 
     def index
-      @result = model_class.where(outlet_id: outlet_id)
+      result = model_class.where(outlet_id: outlet_id)
 
-      render json: results, status: 200
+      render json: results(result), status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end
@@ -72,7 +72,7 @@ module Api
     private
 
     def set_object
-      return @object = friendly_object if friendly_object
+      return friendly_object if model_class == Product
 
       @object = model_class.find_by(
         id: params[:id],
@@ -83,8 +83,10 @@ module Api
     end
 
     def friendly_object
-      model_class.friendly.find(params[:id]) if \
-        model_class == Product
+      @object = model_class.friendly.find_by(
+        id: params[:id],
+        outlet_id: outlet_id
+      )
     end
 
     def validate_object

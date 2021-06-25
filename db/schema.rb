@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   end
 
   create_table "line_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id", null: false
+    t.integer "outlet_id", null: false
     t.integer "product_id"
     t.integer "order_id"
     t.integer "quantity", default: 1
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   end
 
   create_table "orders", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id", null: false
+    t.integer "outlet_id", null: false
     t.integer "table_id", null: false
     t.string "number"
     t.integer "item_count", default: 0
@@ -120,7 +120,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   end
 
   create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id"
+    t.integer "outlet_id"
     t.string "name"
     t.string "description"
     t.integer "promotionable"
@@ -134,7 +134,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   create_table "products_taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "product_id"
     t.integer "taxon_id"
-    t.string "outlet_id"
+    t.integer "outlet_id"
     t.integer "position"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -145,7 +145,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
 
   create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
-    t.string "outlet_id"
+    t.integer "outlet_id"
     t.string "resource_type"
     t.bigint "resource_id"
     t.datetime "created_at", precision: 6, null: false
@@ -156,7 +156,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   end
 
   create_table "tables", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id", null: false
+    t.integer "outlet_id", null: false
     t.integer "table_number"
     t.integer "seat", default: 0
     t.integer "guest_access"
@@ -168,7 +168,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
 
   create_table "taxonomies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
-    t.string "outlet_id"
+    t.integer "outlet_id"
     t.integer "position", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -177,7 +177,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
 
   create_table "taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "position", default: 0
-    t.string "outlet_id"
+    t.integer "outlet_id"
     t.string "name", null: false
     t.string "permalink"
     t.integer "taxonomy_id"
@@ -199,7 +199,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   end
 
   create_table "user_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "user_id"
+    t.integer "user_id"
     t.integer "address_id"
     t.string "fullname"
     t.datetime "created_at", precision: 6, null: false
@@ -207,7 +207,6 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "uuid", null: false
     t.string "company_id"
     t.string "outlet_id"
     t.string "email", default: "", null: false
@@ -242,7 +241,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
   end
 
   create_table "users_roles", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "user_id"
+    t.bigint "user_id"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"

@@ -51,8 +51,8 @@ Rails.application.routes.draw do
 
       # frontend routes
       post '/auth/signin', to: 'user_token#create'
-      post '/auth/signup', to: 'users#create'
-      post '/auth/request', to: 'omniauth#request_provider'
+      # post '/auth/signup', to: 'users#create'
+      # post '/auth/request', to: 'omniauth#request_provider'
 
       namespace :frontend do
         get '/', to: 'tables#index'

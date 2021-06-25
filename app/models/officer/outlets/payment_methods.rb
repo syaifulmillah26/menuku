@@ -6,9 +6,7 @@ module Officer
     class PaymentMethods < Main
       # grab all payment methods outlets
       def grab_all
-        [true, payment_methods]
-      rescue StandardError => e
-        [false, { message: e.message }]
+        [200, results(payment_methods)]
       end
 
       private

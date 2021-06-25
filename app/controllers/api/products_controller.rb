@@ -34,13 +34,11 @@ module Api
 
     # set image for product
     def set_image
-      @status, @result = Officer::Images.new(
+      status, result = Officer::Images.new(
         params
       ).save_product_image
 
-      return render json: @result, status: 422 unless @status
-
-      render json: serializer(result), status: 200
+      render json: result, status: status
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end

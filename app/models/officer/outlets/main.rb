@@ -12,9 +12,7 @@ module Officer
       end
 
       def grab_one
-        [true, serializer(@outlet)]
-      rescue StandardError => e
-        [false, e.message]
+        [200, result(@outlet)]
       end
 
       def outlet_id

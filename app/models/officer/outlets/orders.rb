@@ -7,17 +7,13 @@ module Officer
       # confirm
       def confirm
         order.confirm!
-        [true, results]
-      rescue StandardError => e
-        [false, { message: e.message }]
+        [200, results]
       end
 
       # done
       def done
         order.done!
-        [true, results]
-      rescue StandardError => e
-        [false, { message: e.message }]
+        [200, results]
       end
 
       private

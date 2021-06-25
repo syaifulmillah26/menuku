@@ -21,7 +21,7 @@ module StateMachines
       end
 
       def free_table
-        table = Table.find(object&.table_id)
+        table = ::Table.find(object.table_id)
         table.available!
       end
 
@@ -31,7 +31,7 @@ module StateMachines
 
         result = Veritrans.create_widget_token(
           transaction_details: {
-            order_id: 'A98000',
+            order_id: number,
             gross_amount: total
           }
         )

@@ -6,8 +6,6 @@ class Admin
   class CompanyDetail < Admin
     belongs_to  :company,
                 class_name: 'Admin::Company',
-                foreign_key: :company_id,
-                primary_key: :uuid,
                 optional: true
 
     belongs_to  :address,

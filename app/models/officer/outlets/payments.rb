@@ -7,16 +7,14 @@ module Officer
       include MidtransHelper
 
       def midtrans_call
-        return false, { message: t('officer.invalid_params') } if \
+        return error_message(t('officer.invalid_params')) if \
           params[:order_id].blank?
 
         @response = http_get(url, {})
 
         save_response if @response['status_code'] == '200'
 
-        [true, result]
-      rescue StandardError => e
-        [false, { message: e.message }]
+        [200, result]
       end
 
       private

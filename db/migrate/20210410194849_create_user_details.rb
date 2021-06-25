@@ -1,7 +1,7 @@
 class CreateUserDetails < ActiveRecord::Migration[6.1]
   def change
     create_table :user_details do |t|
-      t.string :user_id
+      t.integer :user_id
       t.integer :address_id
       t.string :fullname
 

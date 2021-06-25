@@ -12,23 +12,19 @@ module Officer
 
     # Image Product
     def save_product_image
-      return false, { message: t('officer.invalid_params') } \
+      return error_message(t('officer.invalid_params')) \
         unless params[:image].present?
 
       save
-      [true, @object]
-    rescue StandardError => e
-      [false, e.message]
+      [200, @object]
     end
 
     # NPWP CARD
     def save_npwp_identity
-      return false, { message: t('officer.invalid_params') } \
+      return error_message(t('officer.invalid_params')) \
         unless check_params
 
-      [true, cities]
-    rescue StandardError => e
-      [false, e.message]
+      [200, cities]
     end
 
     private

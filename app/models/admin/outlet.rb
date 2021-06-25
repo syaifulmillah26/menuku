@@ -6,15 +6,12 @@ class Admin
   class Outlet < Admin
     include ::StateMachines::Outlet
     include ApplicationHelper
-    include UuidHelper
 
     extend FriendlyId
     friendly_id :name, use: :slugged
 
     belongs_to  :company,
                 class_name: 'Admin::Company',
-                foreign_key: :company_id,
-                primary_key: :uuid,
                 optional: true
 
     belongs_to  :address,
@@ -42,20 +39,17 @@ class Admin
 
     has_many    :tables,
                 class_name: 'Table',
-                foreign_key: :outlet_id,
-                primary_key: :uuid,
+                dependent: :destroy,
                 inverse_of: :outlet
 
     has_many    :orders,
                 class_name: 'Order',
-                foreign_key: :outlet_id,
-                primary_key: :uuid,
+                dependent: :destroy,
                 inverse_of: :outlet
 
     has_many    :products,
                 class_name: 'Product',
-                foreign_key: :outlet_id,
-                primary_key: :uuid,
+                dependent: :destroy,
                 inverse_of: :outlet
 
     validates   :name, presence: true, uniqueness: true
@@ -73,9 +67,5 @@ class Admin
                                   allow_destroy: true
 
     private
-
-    def check_uuid
-      Admin::Outlet.where(uuid: @uuid)
-    end
   end
 end

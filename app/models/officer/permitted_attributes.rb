@@ -7,8 +7,6 @@ module Officer
   module PermittedAttributes
     ATTRIBUTES = [
       :address_attributes,
-      :company_attributes,
-      :company_detail_attributes,
       :user_attributes,
       :user_detail_attributes,
       :role_attributes,
@@ -19,15 +17,6 @@ module Officer
 
     mattr_reader(*ATTRIBUTES)
 
-    @@company_attributes = [
-      :id, :registration_id, :company_name,
-      company_detail_attributes: company_detail_attributes
-    ]
-
-    @@company_detail_attributes = [
-      :id, :company_id, :address_id, address_attributes: address_attributes
-    ]
-
     @@address_attributes = [
       :address1, :address2,
       :zipcode, :alternative_phone,
@@ -35,13 +24,13 @@ module Officer
       :province_id, :city_id, :subdistrict_id
     ]
 
-    @@user_attributes = [
-      :id, :name, :uuid, :email, :password, :password_confirmation, :slug,
-      user_detail_attributes: user_detail_attributes
-    ]
-
     @@user_detail_attributes = [
       :id, :user_id, :fullname, address_attributes: address_attributes
+    ]
+
+    @@user_attributes = [
+      :id, :name, :email, :password, :password_confirmation, :slug,
+      user_detail_attributes: user_detail_attributes
     ]
 
     @@role_attributes = %i[id name]

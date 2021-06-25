@@ -3,39 +3,49 @@
 module Api
   # profile controller
   class ProfileController < Api::ResourceController
-    # show user profile
+    before_action :set_user_params
+
     def index
-      user = current_user
-      data = { message: t('officer.account.success'), data: serializer(user) }
-      render json: data, status: 200
+      render json: user_data, status: 200
     rescue StandardError => e
-      render json: { message: e.message }, status: 500
+      render json: { error: e.message }, status: 500
     end
 
-    # update user password
     def update_password
+      password = params[:password]
+      return render_error(t('officer.account.password_empty')) if \
+        password.blank?
+
       status, result = Officer::Account::Password.new(
-        params, current_user
+        params
       ).change_password
 
-      return render json: result, status: 422 unless status
-
-      render json: result, status: 200
+      render json: result, status: status
     rescue StandardError => e
-      render json: { message: e.message }, status: 500
+      render json: { error: e.message }, status: 500
     end
 
-    # update user profile
     def update_profile
       status, result = Officer::Account::Profile.new(
-        params, current_user
-      ).update_user_detail
+        params
+      ).update
 
-      return render json: result, status: 422 unless status
-
-      render json: result, status: 200
+      render json: result, status: status
     rescue StandardError => e
-      render json: { message: e.message }, status: 500
+      render json: { error: e.message }, status: 500
+    end
+
+    private
+
+    def set_user_params
+      params[:current_user] = current_user
+    end
+
+    def user_data
+      {
+        message: t('officer.account.success'),
+        data: serializer(current_user)
+      }
     end
   end
 end

@@ -6,35 +6,29 @@ module Officer
     class LineItems < Main
       # add item
       def add
-        return false, { message: t('officer.invalid_params') } if \
+        return error_message(t('officer.invalid_params')) if \
           params[:line_item].blank?
 
         save_line_item
-        [true, result]
-      rescue StandardError => e
-        [false, { message: e.message }]
+        [200, result(@item)]
       end
 
       # update item
       def update
-        return false, { message: t('officer.invalid_params') } if \
+        return error_message(t('officer.invalid_params')) if \
           params[:line_item].blank?
 
         line_item.update(line_item_params) if table_is_match?
-        [true, line_item]
-      rescue StandardError => e
-        [false, { message: e.message }]
+        [200, result(line_item)]
       end
 
       # remove item
       def remove
-        return false, { message: t('officer.invalid_params') } if \
+        return error_message(t('officer.invalid_params')) if \
           params[:id].blank?
 
         line_item.destroy! if table_is_match?
-        [true, { message: 'success' }]
-      rescue StandardError => e
-        [false, { message: e.message }]
+        [200, { message: t('officer.success') }]
       end
 
       private
@@ -50,13 +44,6 @@ module Officer
         ::LineItem.where(
           outlet_id: outlet_id
         )
-      end
-
-      def result
-        {
-          message: 'success',
-          data: @item
-        }
       end
 
       def save_line_item

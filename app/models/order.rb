@@ -7,8 +7,6 @@ class Order < ApplicationRecord
 
   belongs_to  :outlet,
               class_name: 'Admin::Outlet',
-              foreign_key: :outlet_id,
-              primary_key: :uuid,
               optional: true
 
   belongs_to  :table,
@@ -45,8 +43,8 @@ class Order < ApplicationRecord
     table = Table.find_by(
       id: table_id, outlet_id: outlet_id
     )
-    return errors.add(:table_id, 'does not exist') unless table
-    return errors.add(:table_id, 'is booked') unless table&.available?
+    raise 'Table does not exist' unless table
+    raise 'Table is booked' unless table&.available?
 
     table.booked!
   end

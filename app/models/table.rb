@@ -4,9 +4,7 @@
 class Table < ApplicationRecord
   include StateMachines::Table
   belongs_to  :outlet,
-              class_name: 'Admin::Outlet',
-              foreign_key: :outlet_id,
-              primary_key: :uuid
+              class_name: 'Admin::Outlet'
 
   scope :availables, -> { where(status: 'available') }
   scope :booked, -> { where(status: 'booked') }
