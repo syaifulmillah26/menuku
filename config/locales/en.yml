@@ -69,7 +69,8 @@ en:
       token_expired: Token Expired
       password_saved: Password saved!
       password_empty: Password could not be blank
-      password_does_not_match: Old password does not match with current password
+      wrong_current_password: Wrong current password
+      password_does_not_match: Password does not match with Password Confirmation
       wrong_password: Wrong password
       email:
         activate: Email Activated

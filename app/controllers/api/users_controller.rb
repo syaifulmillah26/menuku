@@ -3,10 +3,12 @@
 module Api
   # user controller
   class UsersController < Api::ResourceController
-    exception = %i[create email_confirmation forgot_password set_new_password]
+    exception = %i[email_confirmation forgot_password set_new_password]
     before_action :authenticate_user, except: exception
+    before_action :authenticate_admin, except: exception
     before_action :set_params_outlet, except: exception
     before_action :set_objects, only: :index
+    before_action :set_company_id, only: :create
     # get all users based on company
     def index
       @all = total
@@ -39,6 +41,10 @@ module Api
 
     # handle set new password
     def set_new_password
+      condition = params[:password] == params[:password_confirmation]
+      return render_error(t('officer.account.password_does_not_match')) \
+        unless condition
+
       status, result = Officer::Account::Password.new(
         params
       ).new_password
@@ -51,7 +57,11 @@ module Api
     private
 
     def set_objects
-      @objects = User.where(company_id: current_user&.company&.id)
+      @objects = User.where(company_id: company_id)
+    end
+
+    def set_company_id
+      params[object_name][:company_id] = company_id
     end
   end
 end

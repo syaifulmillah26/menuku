@@ -19,7 +19,7 @@ module Officer
 
     @@address_attributes = [
       :address1, :address2,
-      :zipcode, :alternative_phone,
+      :zipcode, :phone, :alternative_phone,
       :fb_url, :ig_url, :tw_url, :web_url,
       :province_id, :city_id, :subdistrict_id
     ]

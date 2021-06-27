@@ -40,7 +40,7 @@ module Officer
 
       # change password
       def change_password
-        return error_message(t('officer.account.password_does_not_match')) \
+        return error_message(t('officer.account.wrong_current_password')) \
           unless check_current_password
 
         save_password
@@ -51,6 +51,7 @@ module Officer
 
       def save_password
         @user.update_column(:encrypted_password, hashed_password)
+        @user.update_column(:reset_password_token, nil)
         send_mail_password_changed(@user)
       end
 

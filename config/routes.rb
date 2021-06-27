@@ -5,6 +5,10 @@ Rails.application.routes.draw do
     namespace :api do
       # backend routes
 
+      resources :provinces, only: %i[index]
+      resources :cities, only: %i[index]
+      resources :subdistricts, only: %i[index]
+
       resources :profile, only: %i[index] do
         collection do
           put :update_profile

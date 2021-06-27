@@ -101,8 +101,7 @@ module Api
 
     def model_class
       return admin_class if \
-        controller_name.classify.to_s == 'Outlet' || \
-        controller_name.classify.to_s == 'Company'
+        controller_name.classify.to_s == 'Outlet'
 
       controller_name.classify.to_s.constantize
     end

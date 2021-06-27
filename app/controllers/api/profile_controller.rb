@@ -12,9 +12,9 @@ module Api
     end
 
     def update_password
-      password = params[:password]
-      return render_error(t('officer.account.password_empty')) if \
-        password.blank?
+      condition = params[:password] == params[:password_confirmation]
+      return render_error(t('officer.account.password_does_not_match')) \
+        unless condition
 
       status, result = Officer::Account::Password.new(
         params
