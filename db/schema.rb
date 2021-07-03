@@ -12,9 +12,12 @@
 
 ActiveRecord::Schema.define(version: 2021_06_11_190714) do
 
-  create_table "action_text_rich_texts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
-    t.text "body", size: :long
+    t.text "body"
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -22,7 +25,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
-  create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
     t.bigint "record_id", null: false
@@ -32,7 +35,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
-  create_table "active_storage_blobs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "active_storage_blobs", force: :cascade do |t|
     t.string "key", null: false
     t.string "filename", null: false
     t.string "content_type"
@@ -44,24 +47,24 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
-  create_table "active_storage_variant_records", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "active_storage_variant_records", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "friendly_id_slugs", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
     t.string "sluggable_type", limit: 50
     t.string "scope"
     t.datetime "created_at"
-    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true, length: { slug: 70, scope: 70 }
-    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type", length: { slug: 140 }
+    t.index ["slug", "sluggable_type", "scope"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type_and_scope", unique: true
+    t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
-  create_table "line_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "line_items", force: :cascade do |t|
     t.integer "outlet_id", null: false
     t.integer "product_id"
     t.integer "order_id"
@@ -70,7 +73,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "orders", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "orders", force: :cascade do |t|
     t.integer "outlet_id", null: false
     t.integer "table_id", null: false
     t.string "number"
@@ -88,13 +91,13 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "payment_methods", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "payment_methods", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "payments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "payments", force: :cascade do |t|
     t.decimal "amount", precision: 10, scale: 2, default: "0.0", null: false
     t.integer "order_id"
     t.integer "payment_method_id"
@@ -111,7 +114,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["payment_method_id"], name: "index_payments_on_payment_method_id"
   end
 
-  create_table "prices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "prices", force: :cascade do |t|
     t.integer "product_id", null: false
     t.decimal "amount", precision: 10, scale: 2
     t.decimal "cost_price", precision: 10, scale: 2
@@ -119,7 +122,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "products", force: :cascade do |t|
     t.integer "outlet_id"
     t.string "name"
     t.string "description"
@@ -131,7 +134,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["slug"], name: "index_products_on_slug", unique: true
   end
 
-  create_table "products_taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "products_taxons", force: :cascade do |t|
     t.integer "product_id"
     t.integer "taxon_id"
     t.integer "outlet_id"
@@ -143,7 +146,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["taxon_id"], name: "index_products_taxons_on_taxon_id"
   end
 
-  create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "roles", force: :cascade do |t|
     t.string "name"
     t.integer "outlet_id"
     t.string "resource_type"
@@ -155,7 +158,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["resource_type", "resource_id"], name: "index_roles_on_resource"
   end
 
-  create_table "tables", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "tables", force: :cascade do |t|
     t.integer "outlet_id", null: false
     t.integer "table_number"
     t.integer "seat", default: 0
@@ -166,7 +169,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "taxonomies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "taxonomies", force: :cascade do |t|
     t.string "name", null: false
     t.integer "outlet_id"
     t.integer "position", default: 0
@@ -175,7 +178,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["position"], name: "index_taxonomies_on_position"
   end
 
-  create_table "taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "taxons", force: :cascade do |t|
     t.integer "position", default: 0
     t.integer "outlet_id"
     t.string "name", null: false
@@ -198,7 +201,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["taxonomy_id"], name: "index_taxons_on_taxonomy_id"
   end
 
-  create_table "user_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "user_details", force: :cascade do |t|
     t.integer "user_id"
     t.integer "address_id"
     t.string "fullname"
@@ -206,7 +209,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "company_id"
     t.string "outlet_id"
     t.string "email", default: "", null: false
@@ -240,7 +243,7 @@ ActiveRecord::Schema.define(version: 2021_06_11_190714) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  create_table "users_roles", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "users_roles", id: false, force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
