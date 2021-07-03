@@ -4,13 +4,16 @@ module Api
   # resource class
   class ResourceController < Api::ApplicationController
     before_action :authenticate_user
-    before_action :set_object, only: %i[show update destroy images]
+    before_action :set_params_outlet
+    before_action :set_object, only: %i[show update destroy]
+    before_action :validate_object, only: %i[show update destroy]
+    before_action :set_outlet_id, only: %i[create]
     helper_method :permitted_resource_params
 
     def index
-      @objects = model_class.all
-      @all = total
-      render json: all_datas, status: 200
+      result = model_class.where(outlet_id: outlet_id)
+
+      render json: results(result), status: 200
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end
@@ -48,11 +51,7 @@ module Api
     end
 
     def destroy
-      data = { message: 'You have no right to do this' }
-      return render json: data, status: 422 unless admin_permission
-
-      return invalid_resource!(@object) unless @object.destroy
-
+      @object.destroy!
       render json: { message: t('officer.success') }, status: :ok
     rescue StandardError => e
       render json: { error: e.message }, status: 500
@@ -73,12 +72,26 @@ module Api
     private
 
     def set_object
-      return @object = model_class.friendly.find(params[:id]) if \
-        model_class == Admin::Outlet || model_class == Product
+      return friendly_object if model_class == Product
 
-      @object = model_class.find(params[:id])
+      @object = model_class.find_by(
+        id: params[:id],
+        outlet_id: outlet_id
+      )
     rescue StandardError => e
       render json: { error: e.message }, status: 500
+    end
+
+    def friendly_object
+      @object = model_class.friendly.find_by(
+        id: params[:id],
+        outlet_id: outlet_id
+      )
+    end
+
+    def validate_object
+      message = { message: "#{model_class.model_name.human} not found" }
+      return render json: message, status: 400 if @object.blank?
     end
 
     def permitted_resource_params
@@ -88,8 +101,7 @@ module Api
 
     def model_class
       return admin_class if \
-        controller_name.classify.to_s == 'Outlet' || \
-        controller_name.classify.to_s == 'Company'
+        controller_name.classify.to_s == 'Outlet'
 
       controller_name.classify.to_s.constantize
     end
@@ -103,36 +115,12 @@ module Api
       controller_name.singularize
     end
 
-    def limit
-      @objects = @objects.limit(params[:limit])
+    def set_outlet_id
+      params[object_name][:outlet_id] = outlet_id
     end
 
-    def offset
-      @objects = @objects.offset(params[:offset])
-    end
-
-    def total
-      @objects&.count
-    end
-
-    def results
-      @objects = @result
-      @all = total
-      all_datas
-    end
-
-    def all_datas
-      check_limit_and_offset
-      {
-        message: t('officer.success'), total: @all,
-        limit: params[:limit], offset: params[:offset],
-        data: serializer(desc(@objects))
-      }
-    end
-
-    def check_limit_and_offset
-      limit if params[:limit].present?
-      offset if params[:offset].present?
+    def set_params_outlet
+      params[:outlet] = outlet
     end
   end
 end

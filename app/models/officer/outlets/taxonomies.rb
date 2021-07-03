@@ -4,30 +4,12 @@ module Officer
   module Outlets
     # Taxonomies
     class Taxonomies < Main
-      # grab all taxonomies
-      def grab_all
-        return false, { message: t('officer.invalid_params') } if \
-          params[:outlet_id].blank?
-
-        return false, { message: I18n.t('officer.not_found', r: 'Taxonomies') } \
-          unless taxonomies
-
-        [true, taxonomies]
-      rescue StandardError => e
-        [false, e.message]
-      end
-
       # grap one taxonomy
       def grab_one
-        return false, { message: t('officer.invalid_params') } if \
-          params[:outlet_id].blank? || params[:id].blank?
-
-        return false, { message: I18n.t('officer.not_found', r: 'Taxonomy') } \
+        return error_message(I18n.t('officer.not_found', r: 'Taxonomy')) \
           unless taxonomy
 
-        [true, with_trees]
-      rescue StandardError => e
-        [false, e.message]
+        [200, with_trees]
       end
 
       private
@@ -37,14 +19,12 @@ module Officer
       end
 
       def taxonomy
-        ::Taxonomy.find(params[:id])
-      rescue ActiveRecord::RecordNotFound
-        false
+        ::Taxonomy.find_by(id: params[:id], outlet_id: outlet_id)
       end
 
       def with_trees
         {
-          message: 'success',
+          message: t('officer.success'),
           data: taxonomy.as_json.merge(
             taxons: json_tree(taxonomy&.taxons&.arrange)
           )

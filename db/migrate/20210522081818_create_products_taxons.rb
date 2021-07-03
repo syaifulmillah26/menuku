@@ -3,6 +3,7 @@ class CreateProductsTaxons < ActiveRecord::Migration[6.1]
     create_table :products_taxons do |t|
       t.integer :product_id
       t.integer :taxon_id
+      t.integer :outlet_id
       t.integer :position
 
       t.timestamps

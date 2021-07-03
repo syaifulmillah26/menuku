@@ -23,4 +23,21 @@ module ApplicationHelper
   def object
     self
   end
+
+  def generated_number
+    "#{current_time.strftime('%y%m%d')}000"
+  end
+
+  def model_class
+    object.class
+  end
+
+  def check_generated_number(code, number, field, index)
+    number = number.to_i + index
+    result = code + number.to_s
+    exist = model_class.where(field.to_sym => result)&.first
+    return check_generated_number(code, number, field, index + 1) if exist
+
+    result
+  end
 end

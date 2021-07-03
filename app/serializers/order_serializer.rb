@@ -1,6 +1,10 @@
 class OrderSerializer < ActiveModel::Serializer
-  attributes  :id, :table_id, :order_number, :item_count,
-              :item_total, :total, :additional_tax,
-              :additional_services, :promo_total,
-              :status
+  attributes  :id, :table_id, :number, :item_count,
+              :item_total, :total, :tax_and_service,
+              :tax_and_service_included, :promo_total,
+              :status, :items
+
+  def tax_and_service_included
+    object&.tax_and_service_included
+  end
 end

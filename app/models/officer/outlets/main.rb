@@ -3,23 +3,20 @@
 module Officer
   module Outlets
     # Main
-    class Main < ::Api::ApplicationController
+    class Main < Api::ApplicationController
       attr_reader :params
 
       def initialize(params)
         @params = params
+        @outlet = params[:outlet]
       end
 
-      def grab_all
-        [true, @params&.company&.outlets]
-      rescue StandardError => e
-        [false, e.message]
+      def grab_one
+        [200, result(@outlet)]
       end
 
       def outlet_id
-        ::Admin::Outlet.friendly.find(params[:outlet_id])&.id
-      rescue ActiveRecord::RecordNotFound
-        false
+        @outlet&.id
       end
 
       def taxon

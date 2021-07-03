@@ -7,16 +7,17 @@ class Order < ApplicationRecord
 
   belongs_to  :outlet,
               class_name: 'Admin::Outlet',
-              foreign_key: :outlet_id,
-              primary_key: :uuid,
               optional: true
 
   belongs_to  :table,
               class_name: 'Table',
               optional: true
 
+  has_one     :payment,
+              class_name: 'Payment'
+
   has_many    :items,
-              class_name: 'OrderItem',
+              class_name: 'LineItem',
               dependent: :delete_all,
               inverse_of: :order
 
@@ -24,33 +25,44 @@ class Order < ApplicationRecord
               -> { where(is_cancel: true) },
               through: :items
 
-  accepts_nested_attributes_for :items
-
   after_create :generate_order_number
+
+  after_update :count_total
+
+  validate :ensure_table_is_available, on: :create
+
+  def tax_and_service_included
+    item_total + (
+      item_total * tax_and_service / 100
+    )
+  end
 
   private
 
-  def generate_order_number
-    update_column(:order_number, set_order_number)
-    book_table
-  end
+  def ensure_table_is_available
+    table = Table.find_by(
+      id: table_id, outlet_id: outlet_id
+    )
+    raise 'Table does not exist' unless table
+    raise 'Table is booked' unless table&.available?
 
-  def set_order_number
-    number = 'OR' + rand(1_000_000_000).to_s
-    number_exist = Order.where(order_number: number)&.first
-
-    return set_order_number if number_exist
-
-    number
-  end
-
-  def book_table
-    table = Table.find(object&.table_id)
     table.booked!
   end
 
-  def free_table
-    table = Table.find(object&.table_id)
-    table.available!
+  def generate_order_number
+    update_column(
+      :number,
+      check_generated_number('MN', generated_number, 'number', 1)
+    )
+  end
+
+  def count_total
+    update_column(:total, subtotal)
+  end
+
+  def subtotal
+    item_total + (
+      item_total * tax_and_service / 100 - promo_total
+    )
   end
 end

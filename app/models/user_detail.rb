@@ -4,8 +4,6 @@
 class UserDetail < ApplicationRecord
   belongs_to  :user,
               class_name: 'User',
-              foreign_key: :user_id,
-              primary_key: :uuid,
               touch: true
 
   belongs_to  :address,

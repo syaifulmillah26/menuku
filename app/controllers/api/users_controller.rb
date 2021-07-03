@@ -3,13 +3,14 @@
 module Api
   # user controller
   class UsersController < Api::ResourceController
-    exception = %i[create email_confirmation forgot_password set_new_password]
+    exception = %i[email_confirmation forgot_password set_new_password]
     before_action :authenticate_user, except: exception
-
+    before_action :authenticate_admin, except: exception
+    before_action :set_params_outlet, except: exception
+    before_action :set_objects, only: :index
+    before_action :set_company_id, only: :create
     # get all users based on company
     def index
-      @objects = \
-        User.where(company_id: current_user&.company&.id)
       @all = total
       render json: all_datas, status: :ok
     rescue StandardError => e
@@ -22,9 +23,7 @@ module Api
         params
       ).activate
 
-      return render json: result, status: 422 unless status
-
-      render json: result, status: 200
+      render json: result, status: status
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end
@@ -32,27 +31,37 @@ module Api
     # handle forgot password
     def forgot_password
       status, result = Officer::Account::Password.new(
-        params, {}
+        params
       ).reset_password
 
-      return render json: result, status: 422 unless status
-
-      render json: result, status: 200
+      render json: result, status: status
     rescue StandardError => e
       render json: { message: e.message }, status: 500
     end
 
     # handle set new password
     def set_new_password
+      condition = params[:password] == params[:password_confirmation]
+      return render_error(t('officer.account.password_does_not_match')) \
+        unless condition
+
       status, result = Officer::Account::Password.new(
-        params, {}
+        params
       ).new_password
 
-      return render json: result, status: 422 unless status
-
-      render json: result, status: 200
+      render json: result, status: status
     rescue StandardError => e
       render json: { message: e.message }, status: 500
+    end
+
+    private
+
+    def set_objects
+      @objects = User.where(company_id: company_id)
+    end
+
+    def set_company_id
+      params[object_name][:company_id] = company_id
     end
   end
 end

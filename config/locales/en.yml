@@ -68,10 +68,14 @@ en:
       success: Success
       token_expired: Token Expired
       password_saved: Password saved!
-      password_empty: Password empty
+      password_empty: Password could not be blank
       wrong_current_password: Wrong current password
+      password_does_not_match: Password does not match with Password Confirmation
+      wrong_password: Wrong password
       email:
         activate: Email Activated
+        inactive: Email inactive, please ask your admin to activate your account
+        not_registered: Email is not registered, yet!
     add: Add
     attribute_should_not_be_empty: Attribute should not be empty!
     invalid_params: Invalid params

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_05_085744) do
+ActiveRecord::Schema.define(version: 2021_06_11_190714) do
 
   create_table "action_text_rich_texts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
@@ -61,40 +61,66 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
     t.index ["sluggable_type", "sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_type_and_sluggable_id"
   end
 
-  create_table "order_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id", null: false
+  create_table "line_items", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.integer "outlet_id", null: false
     t.integer "product_id"
     t.integer "order_id"
     t.integer "quantity", default: 1
-    t.integer "is_cancel", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "orders", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id", null: false
+    t.integer "outlet_id", null: false
     t.integer "table_id", null: false
-    t.string "order_number"
+    t.string "number"
     t.integer "item_count", default: 0
-    t.decimal "item_total", precision: 10, scale: 2
-    t.decimal "total", precision: 10, scale: 2
-    t.decimal "additional_tax", precision: 10, scale: 2
-    t.decimal "additional_services", precision: 10, scale: 2
-    t.decimal "promo_total", precision: 10, scale: 2
+    t.decimal "item_total", precision: 10, scale: 2, default: "0.0"
+    t.decimal "total", precision: 10, scale: 2, default: "0.0"
+    t.decimal "tax_and_service", precision: 10, scale: 2, default: "21.0"
+    t.decimal "total_adjustment", precision: 10, scale: 2, default: "0.0"
+    t.decimal "promo_total", precision: 10, scale: 2, default: "0.0"
     t.string "status"
+    t.string "payment_preference"
+    t.decimal "payment_total", precision: 10, scale: 2, default: "0.0"
+    t.string "payment_status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "payment_methods", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "payments", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.decimal "amount", precision: 10, scale: 2, default: "0.0", null: false
+    t.integer "order_id"
+    t.integer "payment_method_id"
+    t.string "status"
+    t.string "number"
+    t.string "card_number"
+    t.string "card_name"
+    t.string "card_expired"
+    t.string "cvv_number"
+    t.text "midtrans_response"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["order_id"], name: "index_payments_on_order_id"
+    t.index ["payment_method_id"], name: "index_payments_on_payment_method_id"
   end
 
   create_table "prices", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "product_id", null: false
     t.decimal "amount", precision: 10, scale: 2
+    t.decimal "cost_price", precision: 10, scale: 2
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "products", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id"
+    t.integer "outlet_id"
     t.string "name"
     t.string "description"
     t.integer "promotionable"
@@ -108,6 +134,7 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
   create_table "products_taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "product_id"
     t.integer "taxon_id"
+    t.integer "outlet_id"
     t.integer "position"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -118,6 +145,7 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
 
   create_table "roles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name"
+    t.integer "outlet_id"
     t.string "resource_type"
     t.bigint "resource_id"
     t.datetime "created_at", precision: 6, null: false
@@ -128,10 +156,11 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
   end
 
   create_table "tables", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "outlet_id", null: false
+    t.integer "outlet_id", null: false
     t.integer "table_number"
     t.integer "seat", default: 0
     t.integer "guest_access"
+    t.string "guest_token"
     t.string "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -139,15 +168,16 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
 
   create_table "taxonomies", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "name", null: false
+    t.integer "outlet_id"
     t.integer "position", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "outlet_id"
     t.index ["position"], name: "index_taxonomies_on_position"
   end
 
   create_table "taxons", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "position", default: 0
+    t.integer "outlet_id"
     t.string "name", null: false
     t.string "permalink"
     t.integer "taxonomy_id"
@@ -169,7 +199,7 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
   end
 
   create_table "user_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "user_id"
+    t.integer "user_id"
     t.integer "address_id"
     t.string "fullname"
     t.datetime "created_at", precision: 6, null: false
@@ -177,7 +207,6 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "uuid", limit: 35, null: false
     t.string "company_id"
     t.string "outlet_id"
     t.string "email", default: "", null: false
@@ -212,7 +241,7 @@ ActiveRecord::Schema.define(version: 2021_06_05_085744) do
   end
 
   create_table "users_roles", id: false, charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.string "user_id"
+    t.bigint "user_id"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id"

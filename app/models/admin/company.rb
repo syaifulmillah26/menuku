@@ -6,21 +6,16 @@ class Admin
   class Company < Admin
     include ::StateMachines::Company
     include ApplicationHelper
-    include UuidHelper
 
     belongs_to  :business_type,
                 class_name: 'Admin::BusinessType',
                 optional: true
 
     has_one     :company_detail,
-                class_name: 'Admin::CompanyDetail',
-                foreign_key: :company_id,
-                primary_key: :uuid
+                class_name: 'Admin::CompanyDetail'
 
     has_many    :outlets,
                 class_name: 'Admin::Outlet',
-                foreign_key: :company_id,
-                primary_key: :uuid,
                 dependent: :destroy
 
     has_many    :admin_outlets,
@@ -31,7 +26,7 @@ class Admin
                 class_name: 'User',
                 foreign_key: :company_id
 
-    has_many    :all_employees,
+    has_many    :employees,
                 -> { where.not(outlet_id: nil) },
                 class_name: 'User',
                 foreign_key: :company_id

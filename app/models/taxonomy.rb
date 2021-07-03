@@ -30,7 +30,7 @@ class Taxonomy < ApplicationRecord
         updated_at: Time.current
       )
     else
-      object.root = Taxon.create!(taxonomy_id: id, name: name)
+      object.root = Taxon.create!(taxonomy_id: id, name: name, outlet_id: outlet_id)
     end
   end
 

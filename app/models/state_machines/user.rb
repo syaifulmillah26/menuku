@@ -5,14 +5,18 @@ module StateMachines
   module User
     extend ActiveSupport::Concern
     included do
-      state_machine :status, initial: :unconfirmed do
-        event :confirm do
-          transition to: :confirmed, from: %i[
-            unconfirmed confirmed inactive not_set
+      state_machine :status, initial: :inactive do
+        event :activate do
+          transition to: :active, from: %i[
+            active inactive not_set
           ]
         end
 
-        after_transition to: :confirmed, do: :update_confirmed_at
+        after_transition to: :active, do: :update_confirmed_at
+      end
+
+      def update_confirmed_at
+        update_column(:confirmed_at, current_time)
       end
     end
   end

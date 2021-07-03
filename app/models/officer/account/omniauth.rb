@@ -14,15 +14,13 @@ module Officer
 
       # exchange_token
       def exchange_token
-        return false, { message: I18n.t('officer.not_found', r: 'Token') } \
+        return error_message(I18n.t('officer.not_found', r: 'Token')) \
         unless param_exists
 
         @response = condition ? get(google_url) : get(facebook_url)
-        return false, { message: 'invalid token' } if @response.code != 200
+        return error_message('invalid token') if @response.code != 200
 
-        [true, token]
-      rescue StandardError => e
-        [false, e.message]
+        [200, token]
       end
 
       private
@@ -53,8 +51,7 @@ module Officer
       def token
         set_user
         {
-          message: 'success',
-          user_id: @user&.id,
+          message: t('officer.success'),
           auth_token: auth_token&.token
         }
       end

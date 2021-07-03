@@ -11,4 +11,16 @@ class Role < ApplicationRecord
             allow_nil: true
 
   scopify
+
+  before_destroy :check_if_can_be_destroyed
+
+  def check_if_can_be_destroyed
+    return if can_be_deleted?
+
+    raise 'Admin could not be destroyed'
+  end
+
+  def can_be_deleted?
+    name != 'admin'
+  end
 end

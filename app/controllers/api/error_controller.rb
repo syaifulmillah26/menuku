@@ -7,9 +7,7 @@ module Api
 
     # handling root not found
     def handle_root_not_found
-      render json: {
-        message: I18n.t('officer.not_found', r: 'Route')
-      }, status: 404
+      root_not_found
     end
   end
 end
