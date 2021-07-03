@@ -32,9 +32,10 @@ production:
 admin_default: &admin_default
   adapter: postgresql
   encoding: unicode
+  host: <%= ENV['ADMIN_MENUKU_HOST'] %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: <%= ENV['DB_USERNAME'] %>
-  password: <%= ENV['DB_PASSWORD'] %>
+  username: <%= ENV['ADMIN_MENUKU_USERNAME'] %>
+  password: <%= ENV['ADMIN_MENUKU_PASSWORD'] %>
 
 admin:
   <<: *admin_default
