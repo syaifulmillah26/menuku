@@ -2,7 +2,7 @@
 
 # UserSerializer
 class UserSerializer < ActiveModel::Serializer
-  attributes  :id, :company_id, :outlet, :email, :status, :created_at,
+  attributes  :id, :company_id, :outlet_id, :email, :status, :created_at,
               :user_detail_attributes
 
   def outlet

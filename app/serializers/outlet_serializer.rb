@@ -2,9 +2,9 @@
 
 # OutletSerializer
 class OutletSerializer < ActiveModel::Serializer
-  attributes :id, :name, :slug, :status, :address
+  attributes :id, :name, :slug, :status, :address_attributes
 
-  def address
+  def address_attributes
     object.address.as_json.merge(
       province: object&.address&.province,
       city: object&.address&.city,
