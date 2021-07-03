@@ -80,7 +80,7 @@ module Api
       check_limit_and_offset
       {
         message: t('officer.success'), total: @all,
-        limit: params[:limit], offset: params[:offset],
+        limit: params[:limit]&.to_i, offset: params[:offset]&.to_i,
         data: serializer(desc(@objects))
       }
     end

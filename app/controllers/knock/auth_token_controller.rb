@@ -22,7 +22,8 @@ module Knock
     def token
       {
         message: 'success',
-        auth_token: auth_token&.token
+        auth_token: auth_token&.token,
+        outlet: entity.outlet.slug
       }
     end
 
