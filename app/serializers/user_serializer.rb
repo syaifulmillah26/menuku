@@ -2,8 +2,8 @@
 
 # UserSerializer
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :company_id, :outlet, :email, :status, :created_at
-  has_one :user_detail
+  attributes  :id, :company_id, :outlet, :email, :status, :created_at,
+              :user_detail_attributes
 
   def outlet
     object.outlet
@@ -11,5 +11,11 @@ class UserSerializer < ActiveModel::Serializer
 
   def created_at
     object.created_at.strftime('%d/%m/%Y')
+  end
+
+  def user_detail_attributes
+    object.user_detail.as_json.merge(
+      address_attributes: object&.user_detail&.address
+    )
   end
 end
