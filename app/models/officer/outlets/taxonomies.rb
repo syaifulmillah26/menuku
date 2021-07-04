@@ -36,7 +36,7 @@ module Officer
           {
             id: node.id, taxonomy_id: node.taxonomy_id,
             name: node.name, permalink: node.permalink,
-            childrens: json_tree(sub_nodes).compact
+            children: json_tree(sub_nodes).compact
           }
         end
       end
