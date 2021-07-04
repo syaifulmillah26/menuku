@@ -29,6 +29,7 @@ class Taxonomy < ApplicationRecord
         name: name,
         updated_at: Time.current
       )
+      update_child_permalinks
     else
       object.root = Taxon.create!(taxonomy_id: id, name: name, outlet_id: outlet_id)
     end
@@ -36,5 +37,18 @@ class Taxonomy < ApplicationRecord
 
   def set_position
     update_column(:position, Taxonomy.maximum(:position).to_i)
+  end
+
+  def update_child_permalinks
+    children = taxons.where.not(ancestry: nil)
+    children.each do |child|
+      split_permalink = child&.permalink&.split('/')
+      split_permalink[0] = dasherize.downcase
+      child.update_column(:permalink, split_permalink.join('/'))
+    end
+  end
+
+  def dasherize
+    name.gsub(' ', '-')
   end
 end
